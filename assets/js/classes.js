@@ -7,6 +7,20 @@ class country {
         this.currency = currency;
         this.natAnth = natAnth;
         this.group = group;
-        this.active = [capital, gdp, hos, currency, natAnth];
     }
 };
+
+class countryProp{
+    constructor(label, title, dl){
+        this.label = label;
+        this.title = title;
+        this.dl = dl;
+    }
+}
+
+const capital = new countryProp("capital", "Capitals", 1)
+const gdp = new countryProp("GDP", "Gross Domestic Product", 5)
+const hos = new countryProp("head of state", "Heads of State", 4)
+const currency = new countryProp("currency", "National Currencies", 2)
+const natAnth = new countryProp("national anthem", "National Anthems", 3)
+let countryProps = [capital, gdp, hos, currency, natAnth]

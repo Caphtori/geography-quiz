@@ -13,7 +13,28 @@
         <h1>Geography Quiz</h1>
     </header>
     <main id="root">
+        <ul class="status-bar">
+            <li id="timer" class="stat-box">
+                <div class="stat-title">
+                    <h2>Time</h2>
+                </div>
+                <div id="timer-value" class="stat-value" data-visibility="off"></div>
+            </li>
+            <li id="difficulty" class="stat-box" data-visibility="off">
+                <div class="stat-title">
+                    <h2>Difficulty</h2>
+                </div>
+                <div id="difficulty-value" class="stat-value" data-visibility="off"></div>
+            </li>
+            <li id="score" class="stat-box">
+                <div class="stat-title">
+                    <h2>Score</h2>
+                </div>
+                <div id="timer-value" class="stat-value"></div>
+            </li>
+        </ul>
         <div class="quizbox" id="quizbox">
+            <header id="qbox-header" class="qbox-header"></header>
             
         </div>
     </main>

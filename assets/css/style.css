@@ -14,7 +14,7 @@ body{
 }
 
 header{
-    padding: 30px;
+    padding: 20px;
     background-color: var(--clr3);
     display: flex;
     justify-content: center;
@@ -37,7 +37,7 @@ main{
 }
 
 .status-bar{
-    /* visibility: hidden; */
+    visibility: hidden;
     padding: 3% 1%;
     display: flex;
     flex-direction: row;
@@ -48,6 +48,7 @@ main{
     display: flex;
     flex-direction: row;
     box-shadow: 3px 5px 2px 2px var(--shadow);
+    font-size: 1.5rem;
 }
 
 .stat-title{
@@ -60,30 +61,57 @@ main{
     background-color: var(--clr2);
     padding: .75rem 1rem;
     border: 1px solid var(--txtclr);
+    font-weight: 700;
+    /* font-size: 1.25rem; */
 }
 
-h2 {
+/* h2 {
     font-size: 1.25rem;
-}
+} */
 
 
-.quizbox{
+.quiz-card{
     min-height: 80%;
     background-color: var(--clr2);
     border-radius: 25px;
     box-shadow: 0 0 5px 2px var(--shadow);
 }
 
-.qbox-header{
+.qcard-header{
     border-radius: 25px 25px 0 0;
     box-shadow: 0 2px 3px 2px var(--shadow);
     display: flex;
     justify-content: start;
     padding: 1rem 0;
     padding-left: 1rem;
-
 }
 
 h3{
     font-size: 2rem;
+}
+
+.qbox-shadow{
+    display: flex;
+    flex-direction: column;
+}
+
+.starter-ul{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.starter-ul li{
+    padding: .5rem;
+    background-color: var(--clr1);
+    font-size: .75rem;
+    border: 1px solid black;
+    box-shadow: 0 0 5px 2px var(--shadow);
+}
+
+.startBtn{
+    font-size: 2rem;
+    background-color: green;
+    border: 2px solid black;
+    box-shadow: 0 0 10px 5px var(--shadow);
 }

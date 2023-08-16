@@ -157,6 +157,8 @@ function startTimer(){
 
 // Quiz Render Functions
 
+let testCountries = [usa, germany, israel, japan, spain, russia, italy, ghana, mexico, chile, mali, uae, tunisia, morocco, vanuatu];
+
 function coinflip(){
     let coin = Math.floor(Math.random()*2);
     if (coin>0){
@@ -171,10 +173,18 @@ function quizRender(){
     let qBox = document.createElement('section');
     let ul = document.createElement('ul');
     qBox.setAttribute("class", "qBox");
+
+    let prop = randChoice(countryProps);
+    let countryCh = randChoice(testCountries);
+    console.log(prop.label)
+    console.log(countryCh.label)
+    let test = countryCh.propMW(prop)
+    console.log(test)
+
     if (isReverse){
-        qBox.textContent = "What is the [property] of [country]?";
+        qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
     } else {
-        qBox.textContent = "[country.property] is the [property] of what country?"
+        qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?"
     };
 
     ul.setAttribute("class", "aUl");
@@ -185,7 +195,8 @@ function quizRender(){
         li.textContent = abcd[i]+": Bub";
         ul.appendChild(li);
     }
-    
+    headerEl.textContent = prop.title;
+
     quizboxEL.appendChild(qBox);
     quizboxEL.appendChild(ul)
 };
@@ -201,6 +212,18 @@ function arrayShuffler(array, length){
     };
     return newArray
 };
+
+// Question Generator
+function randChoice(array){
+    let choice = Math.floor(Math.random()*array.length);
+    return array[choice]
+}
+;
+// function questionGenerator(){
+//     let answers = [];
+//     let prop = randChoice(countryProps);
+
+// };
 
 
 // Start

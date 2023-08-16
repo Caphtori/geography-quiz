@@ -33,53 +33,13 @@ function capitalize(str, n){
 };
 
 function renderStart(){
-    // let startSections = document.createElement('ul')
-    // let gameOptions = document.createElement('ul');
-    // let diffOptions = document.createElement('ul');
-    // let startButton = document.createElement('button');
-    // let sections = [];
-    // let mode = {
-    //     label: "mode",
-    //     titleTxt: "Choose Game Mode",
-    //     rndr: (parent, array)=>{
-    //         let title = document.createElement('h4');
-    //         let ul = document.createElement('ul');
-    //         title.textContent = this.titleTxt;
-    //         ul.setAttribute("class", this.label);
-    //         for (let i=0; i<array.length; i++){
-    //             let li = document.createElement('li');
-    //             // let proper = 
-    //             li.textContent = capitalize(this.label, 0);
-    //             // li.setAttribute("class", String(array)+" "+array[i]);
-    //             // if (array[i].label)
-    //             li.setAttribute("class", array[i]);
-    //             ul.appendChild(li);
-    //         }
-    //         parent.appendchild(ul);
-
-    //         // parent.setAttribute("style", "display: flex; ")
-
-    //     }
-    // }
     let sectionClasses =[mode, diffLevel, startBtn];
     for (let i=0; i<sectionClasses.length; i++){
         let section = document.createElement('section');
-        // section.setAttribute("class", sectionClasses[i]);
+        section.setAttribute("class", "starter-section");
         sectionClasses[i].rndr(section);
         quizboxEL.appendChild(section);
     };
-
-    // for (let i=0; i<quizboxEL.children.length; i++){
-    //     if (quizboxEL.children[i]==="")
-    // };
-
-    // for (let i=0; i<diffLevels.length; i++){
-
-    // };
-
-    // for (let i=0; i<diffLevels.length; i++){
-
-    // };
 
     headerEl.textContent = "New Game";
 };

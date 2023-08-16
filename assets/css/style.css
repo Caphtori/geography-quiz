@@ -109,7 +109,7 @@ h3{
 }
 
 
-
+/* Starter Screen Styles */
 .starter-section{
     display: flex;
     flex-direction: column;
@@ -163,4 +163,48 @@ h3{
 
 h4 {
     font-size: 2rem;
+}
+
+
+
+/* Quiz Styles */
+.qBox{
+    background-color: var(--clr1);
+    height: 40%;
+    border-bottom: 2px dotted black;
+    font-size: 2rem;
+    padding-left: 1rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.aUl{
+    height: 55%;
+}
+
+.aUl li{
+    height: 25%;
+    border-bottom: 2px dotted black;
+    font-size: 1.5rem;
+    padding-left: 1rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    /* position: relative;
+    z-index: 0; */
+}
+
+.aUl li:hover{
+    background-color: var(--clr2);
+    border: 2px solid black;
+    box-shadow: 0 1px 2px 2px var(--shadow);
+    position: relative;
+    top: -0.25rem;
+    z-index: 1;
+}
+
+.aUl li:active{
+    background-color: var(--clr2);
+    border: 2px solid yellow;
 }

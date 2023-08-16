@@ -19,8 +19,8 @@ class countryProp{
 };
 
 class diffOption{
-    constructor(name, range, level, clr){
-        this.name = name;
+    constructor(label, range, level, clr){
+        this.label = label;
         this.range = range;
         this.level =level;
         this.clr = clr;
@@ -30,7 +30,7 @@ class diffOption{
 class starterRndr{
     constructor(label, titletxt, array){
         this.label = label;
-        this.titletxt = titletxt;
+        this.titleTxt = titletxt;
         this.array = array;
     }
     rndr (parent) {
@@ -42,30 +42,20 @@ class starterRndr{
         for (let i=0; i<this.array.length; i++){
             let li = document.createElement('li');
             if (this.array[i].label !== undefined){
-                li.textContent = capitalize(this.array[i], 0);
-            } else {
                 li.textContent = this.array[i].label;
+            } else {
+                li.textContent = capitalize(this.array[i], 0);
             };
-            // if (this.array[i].label !== undefined){
-            //     li.setAttribute("class", String(this.array[i]));
-            // } else{
-            //     li.setAttribute("class", this.array[i]);
-            // };
             if (this.array[i].clr !== undefined){
-                li.setAttribute("style", "background-color: array[i].clr");
+                let bg = "background-color: "+this.array[i].clr;
+                li.setAttribute("style", bg);
             };
             ul.appendChild(li);
         }
+        parent.appendChild(title);
         parent.appendChild(ul);
     }
 }
-
-// class gameMode{
-//     constructor(label, clr, txtClr){
-//         this.label = label;
-//         this.clr = clr;
-//     }
-// };
 
 const capital = new countryProp("capital", "Capitals", 1);
 const gdp = new countryProp("GDP", "Gross Domestic Product", 5);
@@ -81,19 +71,18 @@ const easy = new diffOption("Easy", [1, 2], 2, "#90EE90");
 const reg = new diffOption("Regular", [2, 3, 4], 3, "#FFFF00");
 const hard = new diffOption("Hard", [4, 5], 4, "#ff4500");
 const extreme = new diffOption("Extreme", [5], 5, "#FF000D");
-const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, "#cc8899");
+const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, "#9966CB");
 
-// let diffLevels = [baby, easy, reg, hard, extreme, random];
 
-// const standard = new gameMode("standard", "")
 
 const mode = new starterRndr("mode", "Choose Game Mode", ["standard", "endless"]);
 const diffLevel = new starterRndr("difflvl", "Choose Difficulty Level", [baby, easy, reg, hard, extreme, random]);
 let startBtn = {
     label: "START",
-    rndr: (parent)=>{
+    rndr: function(parent){
         let button = document.createElement('button');
         button.setAttribute("class", "startBtn");
+        // button.textContent = this.label;
         button.textContent = this.label;
 
         parent.appendChild(button);

@@ -14,29 +14,32 @@
     </header>
     <main id="root">
         <ul class="status-bar">
-            <li id="timer" class="stat-box">
+            <li class="stat-box">
                 <div class="stat-title">
                     <h2>Time</h2>
                 </div>
-                <div id="timer-value" class="stat-value" data-visibility="off"></div>
+                <div id="timer" class="stat-value"></div>
             </li>
-            <li id="difficulty" class="stat-box" data-visibility="off">
+            <li class="stat-box">
                 <div class="stat-title">
                     <h2>Difficulty</h2>
                 </div>
-                <div id="difficulty-value" class="stat-value" data-visibility="off"></div>
+                <div id="difficulty" class="stat-value"></div>
             </li>
-            <li id="score" class="stat-box">
+            <li class="stat-box">
                 <div class="stat-title">
                     <h2>Score</h2>
                 </div>
-                <div id="timer-value" class="stat-value"></div>
+                <div id="score" class="stat-value"></div>
             </li>
         </ul>
-        <div class="quizbox" id="quizbox">
-            <header id="qbox-header" class="qbox-header">
+        <div class="quiz-card">
+            <header class="qcard-header">
+                <h3 id="qcard-title"></h3>
             </header>
-            
+            <div id="quizbox" class="qbox-shadow">
+
+            </div>
         </div>
     </main>
     

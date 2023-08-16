@@ -1,11 +1,12 @@
 let rootEl = document.querySelector('#root');
+let statusBar = document.querySelector("#status-bar");
 let timerEl = document.querySelector('#timer');
 let difficultyEl = document.querySelector('#difficulty');
 let scoreEl = document.querySelector('#score');
 let headerEl = document.querySelector('#qcard-title');
 let quizboxEL = document.querySelector('#quizbox');
 
-// let gameModes = ["standard", "endless"]
+let screen = 'start';
 
 let quizTime = 0;
 let quizDiff = "";
@@ -32,6 +33,7 @@ function capitalize(str, n){
     return newStr;
 };
 
+// Start Screen Functions
 function renderStart(){
     let sectionClasses =[mode, diffLevel, startBtn];
     for (let i=0; i<sectionClasses.length; i++){
@@ -44,9 +46,27 @@ function renderStart(){
     headerEl.textContent = "New Game";
 };
 
-function init(){
-    
-    renderStart();
+// function init(){
+//     renderStart();
+// };
+function startGame(){
+    quizboxEL.innerHTML = '';
 };
 
-init()
+function startGameCl(event){
+    let element = event.target;
+    if (element.matches(".startBtn") === true) {
+        statusBar.setAttribute("style", "visibility: visible;");
+        quizTime = 60;
+        timerEl.textContent = quizTime;
+        startGame();
+    }
+};
+
+// Start
+// init();
+renderStart();
+
+if (screen==="start"){
+    quizboxEL.addEventListener("click", startGameCl);
+};

@@ -46,13 +46,16 @@ function renderStart(){
     headerEl.textContent = "New Game";
 };
 
+
+// Game Start Function
 function startGame(){
     quizboxEL.innerHTML = '';
     statusBar.setAttribute("style", "visibility: visible;");
-    // quizTime = 60;
-    quizTime = 20;
+    quizTime = 60;
+    // quizTime = 20;
     timerEl.textContent = timerDisplay();
     startTimer();
+    quizRender()
 };
 
 function startGameCl(event){
@@ -152,7 +155,52 @@ function startTimer(){
 };
 
 
+// Quiz Render Functions
 
+function coinflip(){
+    let coin = Math.floor(Math.random()*2);
+    if (coin>0){
+      return true;
+    } else {
+      return false;
+    };
+  };
+
+function quizRender(){
+    let isReverse = coinflip()
+    let qBox = document.createElement('section');
+    let ul = document.createElement('ul');
+    qBox.setAttribute("class", "qBox");
+    if (isReverse){
+        qBox.textContent = "What is the [property] of [country]?";
+    } else {
+        qBox.textContent = "[country.property] is the [property] of what country?"
+    };
+
+    ul.setAttribute("class", "aUl");
+    for (let i=0; i<4; i++){
+        let abcd = "ABCD"
+        let li = document.createElement('li')
+        li.dataset.index = i;
+        li.textContent = abcd[i]+": Bub";
+        ul.appendChild(li);
+    }
+    
+    quizboxEL.appendChild(qBox);
+    quizboxEL.appendChild(ul)
+};
+
+// Array Shuffling Function
+function arrayShuffler(array, length){
+    let newArray = [];
+    while (newArray.length !== length){
+       let i = Math.floor(Math.random()*array.length);
+       if (!newArray.includes(array[i])){
+        newArray.push(array[i]);
+       };
+    };
+    return newArray
+};
 
 
 // Start

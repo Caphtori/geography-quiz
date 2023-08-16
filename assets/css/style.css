@@ -63,7 +63,15 @@ main{
     padding: .75rem 1rem;
     border: 1px solid var(--txtclr);
     font-weight: 700;
+    min-width: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /* font-size: 1.25rem; */
+}
+
+#timer{
+    justify-content: end;
 }
 
 /* h2 {

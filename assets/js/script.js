@@ -46,22 +46,114 @@ function renderStart(){
     headerEl.textContent = "New Game";
 };
 
-// function init(){
-//     renderStart();
-// };
 function startGame(){
     quizboxEL.innerHTML = '';
+    statusBar.setAttribute("style", "visibility: visible;");
+    // quizTime = 60;
+    quizTime = 20;
+    timerEl.textContent = timerDisplay();
+    startTimer();
 };
 
 function startGameCl(event){
     let element = event.target;
     if (element.matches(".startBtn") === true) {
-        statusBar.setAttribute("style", "visibility: visible;");
-        quizTime = 60;
-        timerEl.textContent = quizTime;
         startGame();
     }
 };
+
+
+
+// Timer Functions
+
+function timerDisplay(){
+    // let seconds = quizTime;
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    
+    if (quizTime<60){
+        return quizTime;
+    } else if (quizTime<3600){
+        seconds = quizTime%60;
+        minutes = (quizTime-seconds)/60;
+        if (seconds<10){
+            return minutes+":0"+seconds;
+        } else {
+            return minutes+":"+seconds;
+        };
+    } else {
+        // let seconds = quizTime%60;
+        // let minutes = ((quizTime-seconds)%3600)/60;
+        // let hours = (quizTime-(minutes*60))/60;
+        let remainder = quizTime%3600;
+        seconds = remainder%60;
+        minutes = (remainder-seconds)/60
+        hours = (quizTime-remainder)/3600;
+        if(minutes<10&&seconds<10){
+            return hours+":0"+minutes+":0"+seconds;
+        } else if (minutes<10){
+            return hours+":0"+minutes+":"+seconds;
+        } else if (seconds<10){
+            return hours+":"+minutes+":0"+seconds;
+        } else{
+            return hours+":"+minutes+":"+seconds;
+        };
+    }
+};
+
+// Flash Effect
+function timerFlash(){
+    let crunch = 300;
+    let bgClr = true;
+    let isCrunch = false;
+    let flashClr = "background-color: #FFFF00;";
+    let flashInterval = setInterval(()=>{
+        if (quizTime===5){
+            if (!isCrunch){
+                flashClr = "background-color: red;";
+                crunch = 100;
+                isCrunch = true;
+            };
+        };
+        if (bgClr){
+            // timerEl.setAttribute("style", "background-color: '#FF000D';");
+            timerEl.setAttribute("style", flashClr);
+            bgClr = false;
+        } else{
+            timerEl.setAttribute("style", "background-color: var(--clr2);");
+            bgClr = true;
+        };
+
+        if (quizTime===0){
+            clearInterval(flashInterval);
+            timerEl.setAttribute("style", "background-color: var(--clr2);");
+        };
+    }, crunch);
+};
+
+
+// The actual timer
+function startTimer(){
+    let isFlashing =false;
+    let timerInterval = setInterval(()=>{
+        quizTime--;
+        timerEl.textContent = timerDisplay();
+        if (quizTime===15){
+            if (!isFlashing){
+                timerFlash();
+                isFlashing=false;
+            };
+        };
+        if (quizTime===0){
+            clearInterval(timerInterval);
+        };
+    }, 1000);
+};
+
+
+
+
 
 // Start
 // init();

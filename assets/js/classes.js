@@ -86,8 +86,5 @@ let startBtn = {
         button.textContent = this.label;
 
         parent.appendChild(button);
-    },
-    action: function(){
-        quizboxEL.innerHTML = '';
     }
 }

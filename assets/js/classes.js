@@ -97,28 +97,32 @@ function rndrndr(btn, val){
     }
 };
 
-function clickemMode(){
+function clickemMode(event){
+    event.preventDefault();
+    let element = event.target
     let btnList = document.getElementsByClassName("choiceBtn");
-    let thisBtn = btnList[0];
+    // let thisBtn = btnList[0];
     let otherBtn = btnList[1];
     let revertStyle = "visibility: visible; background-color: "+player.difficulty.clr;
 
     if (player.mode==="standard"){
         player.mode = "endless"
-        thisBtn.textContent = "Endless";
+        element.textContent = "Endless";
         otherBtn.setAttribute("style", "visibility: hidden;");
         difficultyEl.textContent = player.mode;
     } else {
         player.mode = "standard";
-        thisBtn.textContent = "Standard";
+        element.textContent = "Standard";
         otherBtn.setAttribute("style", revertStyle);
         difficultyEl.textContent = player.difficulty.label;
     };
 };
 
-function clickEmDiff(){
+function clickEmDiff(event){
+    event.preventDefault();
+    let element = event.target
     let btnList = document.getElementsByClassName("choiceBtn");
-    let thisBtn = btnList[1];
+    // let thisBtn = btnList[1];
     let n = diffLevel.array.indexOf(player.difficulty);
     
     n++;
@@ -130,8 +134,8 @@ function clickEmDiff(){
         player.difficulty = diffLevel.array[n];
     }
     let bg = "background-color: "+player.difficulty.clr;
-    thisBtn.textContent = player.difficulty.label;
-    thisBtn.setAttribute("style", bg);
+    element.textContent = player.difficulty.label;
+    element.setAttribute("style", bg);
     difficultyEl.textContent = player.difficulty.label;
     difficultyEl.setAttribute("style", bg);
     // hisBtn.setAttribute("style", player.difficulty.bg)
@@ -183,7 +187,7 @@ const natAnth = new countryProp("national anthem", "National Anthems", 3);
 
 const baby = new diffOption("Baby", [1], 1, 0, "#89cff0");
 const easy = new diffOption("Easy", [1, 2], 2, 1, "#90EE90");
-const reg = new diffOption("Regular", [2, 3, 4], 3, 3, "#FFFF00");
+const reg = new diffOption("Normal", [2, 3, 4], 3, 3, "#FFFF00");
 const hard = new diffOption("Hard", [4, 5], 4, 5, "#ff4500");
 const extreme = new diffOption("Extreme", [5], 5, 7, "#FF000D");
 const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, "#9966CB");

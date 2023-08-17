@@ -35,10 +35,10 @@ class countryProp{
 
 
 class diffOption{
-    constructor(label, range, level, clr){
+    constructor(label, range, points, clr){
         this.label = label;
         this.range = range;
-        this.level =level;
+        this.points = points;
         this.clr = clr;
     }
 };

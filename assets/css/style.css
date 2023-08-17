@@ -276,3 +276,35 @@ h4 {
     display: flex;
     justify-self: center;
 }
+
+.flex-body{
+    display: flex;
+    flex-direction: column;
+    height: 85%;
+}
+
+.list-box{
+    display: flex;
+    align-self: center;
+    margin-top: 5%;
+    height: 100%;
+    min-width: 60%;
+    background-color: var(--clr2);
+    border-radius: 25px;
+    box-shadow: 0 0 5px 2px var(--shadow);
+}
+
+.ulHs{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    height: 100%;
+}
+
+.ilHs{
+    display: flex;
+    height: 10%;
+    align-items: center;
+    padding-left: .5rem;
+    border-bottom: 1px dashed black;
+}

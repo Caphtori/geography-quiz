@@ -804,3 +804,30 @@ renderStart();
 // else if(screen==="quiz"){
 //     quizboxEl.addEventListener("click", resultCl);
 // };
+
+
+
+
+// Highscores Page
+let listBox = document.querySelector('#list-box');
+let n=0;
+function renderHighScore(){
+    let testList=["bub1", "bub2", "bub3"];
+    let ul = document.createElement('ul');
+    ul.setAttribute("class", "ulHs");
+    for (let i=0; i<10; i++){
+        let li = document.createElement('li');
+        li.setAttribute("class", "lilHs");
+        n = i+1;
+        if (testList.length<i){
+            li.textContent= n+") "
+        } else {
+            li.textContent= n+") "+testList[i];
+        };
+        ul.appendChild(li);
+    }   
+    listBox.appendChild(ul);
+    
+}
+
+renderHighScore()

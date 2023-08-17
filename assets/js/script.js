@@ -173,22 +173,45 @@ function startTimer(){
 
 // Quiz Render Functions
 
-// function arrayCompiler
+function standardCompiler(prop, range){
+    let array = [];
+    for (let i=0; i<country.instances.length; i++){
+        let choice = country.instances[i];
+        if (range.includes(choice.propMW(prop)[1])){
+            array.push(choice);
+        };
+    };
+    return array
+};
 
 function quizRender(){
-    let eligibleList = [];
-
+    let eligibleList = country.instances;
     let prop = randChoice(countryProp.instances);
-    let countryCh = randChoice(country.instances);
-    let answers = answerCompiler(countryCh, outBounds, prop);
+    if (player.difficulty===baby||player.difficulty===easy){
+        while (prop===gdp){
+            prop = randChoice(countryProp.instances);
+        }
+    };
+    if (player.mode==="standard"||player.difficulty!==random||prop!==gdp){
+        if (prop !== gdp){
+            eligibleList = standardCompiler(prop, player.difficulty.range);
+        };
+        
+    };
 
+    
+    let countryCh = randChoice(eligibleList);
+    let answers = answerCompiler(countryCh, eligibleList, outBounds, prop);
+
+    
 
     if (prop===capital||prop===natAnth){
         while (countryCh===djibouti){
-            countryCh = randChoice(country.instances);
+            countryCh = randChoice(eligibleList);
         };
     };
     
+    console.log(countryCh.label+" "+countryCh.propMW(prop)[1]+" "+countryCh.group)
 
 
     let isReverse = coinflip()
@@ -204,12 +227,11 @@ function quizRender(){
 
     if (isReverse){
         if (prop===gdp){
-            qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?"
-            
+            qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?";  
         } else if (prop===natAnth){
-            qBox.textContent = "'"+countryCh.propMW(prop)[0]+"' is the "+prop.label+" of what country?"
+            qBox.textContent = "'"+countryCh.propMW(prop)[0]+"' is the "+prop.label+" of what country?";
         } else {
-            qBox.textContent = countryCh.propMW(prop)[0]+" is the "+prop.label+" of what country?"
+            qBox.textContent = countryCh.propMW(prop)[0]+" is the "+prop.label+" of what country?";
         };
     } else {
         qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
@@ -219,16 +241,11 @@ function quizRender(){
     for (let i=0; i<answers.length; i++){
         let abcd = "ABCD"
         let li = document.createElement('li')
-        // li.dataset.index = i;
         li.setAttribute("class", "liAnswer");
         if (answers[i]===countryCh){
             li.dataset.isAnswer = "true";
-            console.log(answers[i].label+" "+li.dataset.isAnswer)
-            // li.setAttribute("data-isAnswer", true);
         } else {
             li.dataset.isAnswer = "false";
-            console.log(answers[i].label+" "+li.dataset.isAnswer)
-            // li.setAttribute("data-isAnswer", false);
         };
         if (isReverse){
             li.textContent = abcd[i]+": " + answers[i].label;
@@ -240,11 +257,13 @@ function quizRender(){
             } else {
                 li.textContent = abcd[i]+": " + answers[i].propMW(prop)[0];
             };
+            console.log(answers[i].label+" "+answers[i].propMW(prop)[1]+" "+answers[i].group)
         };
         
         ul.appendChild(li);
-        // li.addEventListener("click", resultCl, { once: true });
-        li.addEventListener("click", resultCl);
+        li.addEventListener("click", resultCl, { once: true });
+        // li.addEventListener("click", resultCl);
+        
     }
     headerEl.textContent = prop.title;
 
@@ -276,8 +295,6 @@ function resultCl(event){
     let element = event.target;
     let liArray = document.getElementsByClassName("liAnswer");
     let isAnswerTemp = element.getAttribute('data-is-answer');
-    console.log(element);
-    console.log(isAnswerTemp);
     for (let i = 0; i<liArray.length; i++){
         liArray[i].removeEventListener("click", resultCl);
     }
@@ -295,22 +312,95 @@ function resultCl(event){
 
 
 // Answer Compiler
-function answerCompiler(correctAnswer, blockArray, prop){
+function answerCompiler(correctAnswer, eligible, blockArray, prop){
     let answerArray = [correctAnswer];
     let absoAnswer = correctAnswer.propMW(prop);
-    // let isRegion = false;
-    if (prop===natAnth){
-        if (absoAnswer===natAnth){
+    let n = 0;
+    let isRegion = false;
+    let regionList = [];
+    let censure = "Himno Nacional";
+    let isCensure = false;
 
-        }
-    }
-    for (let i=0; i<3; i++){
-        let n = Math.floor(Math.random()*country.instances.length);
-        let arrayAdd = country.instances[n];
-        while (arrayAdd===correctAnswer||blockArray.includes(arrayAdd)){
-            n = Math.floor(Math.random()*country.instances.length);
-            arrayAdd = country.instances[n];
+    function getNumber(arrayInput){
+        n = Math.floor(Math.random()*arrayInput.length);
+    };
+
+    // checks the eligibility of a choice
+    function checker(input, inputArray){
+        let propCheck = input.propMW(prop);
+        if (blockArray.includes(input)){
+            return false;
+        } else if (absoAnswer===propCheck){
+            return false;
+        } else if(inputArray.includes(input)){
+            return false;
+        } else if (isCensure){
+            if (propCheck.includes(censure)){
+                return false;
+            };
+        } else if(player.mode==="endless"){
+            if (prop !== gdp){
+                let diff = absoAnswer[1];
+                if (diff===5&&propCheck[1]<4){
+                    return false;
+                } else if (diff===1&&propCheck[1]>2){
+                    return false;
+                } else if (diff-propCheck>1||propCheck-diff>1){
+                    return false;
+                };
+            };
+        } else {
+            return true;
         };
+        
+    };
+
+    // Checks if the national anthems are too similar
+    if (absoAnswer.includes(censure)){
+        isCensure = true;
+    };
+
+    // ensures that another choice of the same region as the answer is included if possible
+    for (let i=0; i<eligible.length; i++){
+        let isAdded = checker(eligible[i], regionList);
+        let regionMatch = false;
+        if (eligible[i].group===correctAnswer.group){
+            regionMatch = true;
+        }
+        if (isAdded&&regionMatch){
+            regionList.push(eligible[i]);
+        };
+    };
+    console.log(regionList.length);
+    if (regionList.length<1){
+        isRegion = true;
+    };
+    // let isRegion = false;
+    for (let i=0; i<3; i++){
+        // getNumber()
+        let arrayAdd = '';
+        
+        if (!isRegion){
+            getNumber(regionList);
+            arrayAdd = regionList[n];
+            console.log(arrayAdd.label);
+
+            isRegion = true;
+        } else {
+            getNumber(eligible);
+            arrayAdd = eligible[n];
+            let isAdded = checker(arrayAdd, answerArray);
+            while (!isAdded){
+                getNumber(eligible);
+                arrayAdd = eligible[n];
+                isAdded = checker(arrayAdd, answerArray);
+            };
+        };
+        
+        // while (arrayAdd===correctAnswer||blockArray.includes(arrayAdd)){
+        //     getNumber();
+        //     arrayAdd = eligible[n];
+        // };
         answerArray.push(arrayAdd);
     };
     return answerArray

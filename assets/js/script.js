@@ -450,23 +450,23 @@ function rndrTransition(){
             };
         },
         250);
+    };
 
-        function tallyTime(){
-            timerEl.setAttribute("style", "color: green;");
-            let tallyInterval = setInterval(()=>{
-                timeAdd--;
-                quizTime++;
-                divList[1].textContent = "Time: "+timeAdd;
-                timerEl.textContent = timerDisplay();
-    
-                if (timeAdd===0){
-                    timerEl.setAttribute("style", "color: black;");
-                    clearInterval(tallyInterval);
-                };
-            },
-            250);
-    
-        };
+    function tallyPoints(){
+        scoreEl.setAttribute("style", "color: green;");
+        let tallyInterval = setInterval(()=>{
+            pointsAdd--;
+            player.score++;
+            divList[0].textContent = "Points: "+pointsAdd
+            scoreEl.textContent = player.score;
+
+            if (pointsAdd===0){
+                scoreEl.setAttribute("style", "color: black;");
+                clearInterval(tallyInterval);
+            };
+        },
+        250);
+
     };
 
 
@@ -672,6 +672,10 @@ function gameEndScr(){
     let divList = document.getElementsByClassName("transition-div");
     
     
+    for (let i=0; i<divList.length; i++){
+        divList[i].textContent = divText[i];
+    };
+
 
         
 

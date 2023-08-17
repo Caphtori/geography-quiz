@@ -104,5 +104,6 @@ let startBtn = {
         button.textContent = this.label;
 
         parent.appendChild(button);
+        button.addEventListener("click", startGameCl, { once: true });
     }
 }

@@ -1,4 +1,5 @@
 class country {
+    static instances = [];
     constructor(label, capital, gdp, hos, currency, natAnth, group){
         this.label = label;
         this.capital = capital;
@@ -7,12 +8,13 @@ class country {
         this.currency = currency;
         this.natAnth = natAnth;
         this.group = group;
+        country.instances.push(this);
     }
-   propMW(input){
+    propMW(input){
         let n = 0;
         let propArray = [this.capital, this.gdp, this.hos, this.currency, this.natAnth];
-        for (let i = 0; i<countryProps.length; i++){
-            if (countryProps[i]===input){
+        for (let i = 0; i<countryProp.instances.length; i++){
+            if (countryProp.instances[i]===input){
                 n=i
             };
         };
@@ -20,13 +22,17 @@ class country {
     }
 };
 
+
 class countryProp{
+    static instances=[];
     constructor(label, title, dl){
         this.label = label;
         this.title = title;
         this.dl = dl;
+        countryProp.instances.push(this);
     }
 };
+
 
 class diffOption{
     constructor(label, range, level, clr){
@@ -36,6 +42,7 @@ class diffOption{
         this.clr = clr;
     }
 };
+
 
 class starterRndr{
     constructor(label, titletxt, array){
@@ -65,14 +72,14 @@ class starterRndr{
         parent.appendChild(title);
         parent.appendChild(ul);
     }
-}
+};
 
 const capital = new countryProp("capital", "Capitals", 1);
 const gdp = new countryProp("GDP", "Gross Domestic Product (USD)", 5);
 const hos = new countryProp("head of state", "Heads of State", 4);
 const currency = new countryProp("currency", "National Currencies", 2);
 const natAnth = new countryProp("national anthem", "National Anthems", 3);
-let countryProps = [capital, gdp, hos, currency, natAnth];
+// let countryProps = [capital, gdp, hos, currency, natAnth];
 
 
 

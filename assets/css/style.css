@@ -230,3 +230,12 @@ h4 {
 .wrong{
     color: red;
 }
+
+.transition-div{
+    height: 25%;
+    font-size: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

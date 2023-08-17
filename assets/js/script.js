@@ -4,13 +4,28 @@ let timerEl = document.querySelector('#timer');
 let difficultyEl = document.querySelector('#difficulty');
 let scoreEl = document.querySelector('#score');
 let headerEl = document.querySelector('#qcard-title');
-let quizboxEL = document.querySelector('#quizbox');
+let quizboxEl = document.querySelector('#quizbox');
+
+let player = {
+    name: "Bub",
+    score: 0,
+    mode: "standard",
+    difficulty: reg,
+
+    recScore: function(){
+        localStorage.setItem("currentScore", JSONstringify(this));
+    }
+};
+
 
 let screen = 'start';
+let isCorrect = false;
 
 let quizTime = 0;
 let quizDiff = "";
 let quizScore = 0;
+
+let outBounds = [];
 
 timerEl.textContent = quizTime;
 difficultyEl.textContent = quizDiff;
@@ -40,7 +55,7 @@ function renderStart(){
         let section = document.createElement('section');
         section.setAttribute("class", "starter-section");
         sectionClasses[i].rndr(section);
-        quizboxEL.appendChild(section);
+        quizboxEl.appendChild(section);
     };
 
     headerEl.textContent = "New Game";
@@ -49,7 +64,8 @@ function renderStart(){
 
 // Game Start Function
 function startGame(){
-    quizboxEL.innerHTML = '';
+    screen = "quiz";
+    quizboxEl.innerHTML = '';
     statusBar.setAttribute("style", "visibility: visible;");
     quizTime = 60;
     // quizTime = 20;
@@ -157,24 +173,21 @@ function startTimer(){
 
 // Quiz Render Functions
 
-// let testCountries = [usa, germany, israel, japan, spain, russia, italy, ghana, mexico, chile, mali, uae, tunisia, morocco, vanuatu];
-
-function coinflip(){
-    let coin = Math.floor(Math.random()*2);
-    if (coin>0){
-      return true;
-    } else {
-      return false;
-    };
-  };
+// function arrayCompiler
 
 function quizRender(){
-    let outBounds = [];
-
+    let eligibleList = [];
 
     let prop = randChoice(countryProp.instances);
     let countryCh = randChoice(country.instances);
-    let answers = answerCompiler(countryCh, outBounds);
+    let answers = answerCompiler(countryCh, outBounds, prop);
+
+
+    if (prop===capital||prop===natAnth){
+        while (countryCh===djibouti){
+            countryCh = randChoice(country.instances);
+        };
+    };
     
 
 
@@ -184,59 +197,114 @@ function quizRender(){
     let qBox = document.createElement('section');
     let ul = document.createElement('ul');
     qBox.setAttribute("class", "qBox");
-    // console.log(prop.label)
-    // console.log(countryCh.label)
-    // if (countryCh.propMW(prop)[0]==="$"){
-    //     console.log(countryCh.propMW(prop))
-    // } else {
-    //     console.log(countryCh.propMW(prop)[0])
-    // };
     
 
     answers = arrayShuffler(answers);
 
 
     if (isReverse){
-        qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
-    } else {
-        if (countryCh.propMW(prop)[0]==="$"){
+        if (prop===gdp){
             qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?"
+            
+        } else if (prop===natAnth){
+            qBox.textContent = "'"+countryCh.propMW(prop)[0]+"' is the "+prop.label+" of what country?"
         } else {
             qBox.textContent = countryCh.propMW(prop)[0]+" is the "+prop.label+" of what country?"
         };
+    } else {
+        qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
     };
 
     ul.setAttribute("class", "aUl");
-    for (let i=0; i<4; i++){
+    for (let i=0; i<answers.length; i++){
         let abcd = "ABCD"
         let li = document.createElement('li')
-        li.dataset.index = i;
-        li.textContent = abcd[i]+": Bub";
+        // li.dataset.index = i;
+        li.setAttribute("class", "liAnswer");
+        if (answers[i]===countryCh){
+            li.dataset.isAnswer = "true";
+            console.log(answers[i].label+" "+li.dataset.isAnswer)
+            // li.setAttribute("data-isAnswer", true);
+        } else {
+            li.dataset.isAnswer = "false";
+            console.log(answers[i].label+" "+li.dataset.isAnswer)
+            // li.setAttribute("data-isAnswer", false);
+        };
+        if (isReverse){
+            li.textContent = abcd[i]+": " + answers[i].label;
+        } else {
+            if (prop===gdp){
+                li.textContent = abcd[i]+": " + answers[i].propMW(prop);
+            } else if (prop===natAnth){
+                li.textContent = abcd[i]+": '" + answers[i].propMW(prop)[0]+"'";
+            } else {
+                li.textContent = abcd[i]+": " + answers[i].propMW(prop)[0];
+            };
+        };
+        
         ul.appendChild(li);
+        // li.addEventListener("click", resultCl, { once: true });
+        li.addEventListener("click", resultCl);
     }
     headerEl.textContent = prop.title;
 
-    quizboxEL.appendChild(qBox);
-    quizboxEL.appendChild(ul)
+    quizboxEl.appendChild(qBox);
+    quizboxEl.appendChild(ul)
 };
 
-// Array Shuffling Function
-function arrayShuffler(array){
+// Results Render
+function renderResult(){
+    let liArray = document.getElementsByClassName("liAnswer");
     let newArray = [];
-    while (newArray.length !== array.length){
-       let i = Math.floor(Math.random()*array.length);
-       if (!newArray.includes(array[i])){
-        newArray.push(array[i]);
-       };
+    let testNum = 0;
+    for (let i=0; i<liArray.length; i++){
+        newArray.push(liArray[i]);
     };
-    return newArray
+    for (let i=0; i<newArray.length; i++){
+        testNum++
+        let isRight = newArray[i].getAttribute("data-is-answer");
+        if (isRight==="true"){
+            newArray[i].setAttribute("class", "right");
+        }
+        else {
+            newArray[i].setAttribute("class", "wrong");
+        };
+    };
 };
+
+function resultCl(event){
+    let element = event.target;
+    let liArray = document.getElementsByClassName("liAnswer");
+    let isAnswerTemp = element.getAttribute('data-is-answer');
+    console.log(element);
+    console.log(isAnswerTemp);
+    for (let i = 0; i<liArray.length; i++){
+        liArray[i].removeEventListener("click", resultCl);
+    }
+    if (element.matches('li')) {
+        if (isAnswerTemp==="true"){
+            isCorrect = true;
+            element.setAttribute("style", "border: 2px solid green;");
+        } else {
+            isCorrect = false;
+            element.setAttribute("style", "border: 2px solid red;");
+        }
+    };
+    renderResult()
+};
+
 
 // Answer Compiler
-function answerCompiler(correctAnswer, blockArray){
+function answerCompiler(correctAnswer, blockArray, prop){
     let answerArray = [correctAnswer];
+    let absoAnswer = correctAnswer.propMW(prop);
     // let isRegion = false;
-    for (let i=0; i<4; i++){
+    if (prop===natAnth){
+        if (absoAnswer===natAnth){
+
+        }
+    }
+    for (let i=0; i<3; i++){
         let n = Math.floor(Math.random()*country.instances.length);
         let arrayAdd = country.instances[n];
         while (arrayAdd===correctAnswer||blockArray.includes(arrayAdd)){
@@ -248,17 +316,33 @@ function answerCompiler(correctAnswer, blockArray){
     return answerArray
 };
 
-// Question Generator
+
+
+// Misc Functions
+function coinflip(){
+    let coin = Math.floor(Math.random()*2);
+    if (coin>0){
+      return true;
+    } else {
+      return false;
+    };
+  };
+
 function randChoice(array){
     let choice = Math.floor(Math.random()*array.length);
     return array[choice]
-}
-;
-// function questionGenerator(){
-//     let answers = [];
-//     let prop = randChoice(countryProps);
+};
 
-// };
+function arrayShuffler(array){
+    let newArray = [];
+    while (newArray.length !== array.length){
+       let i = Math.floor(Math.random()*array.length);
+       if (!newArray.includes(array[i])){
+        newArray.push(array[i]);
+       };
+    };
+    return newArray
+};
 
 
 // Start
@@ -266,5 +350,8 @@ function randChoice(array){
 renderStart();
 
 if (screen==="start"){
-    quizboxEL.addEventListener("click", startGameCl);
+    quizboxEl.addEventListener("click", startGameCl);
 };
+// else if(screen==="quiz"){
+//     quizboxEl.addEventListener("click", resultCl);
+// };

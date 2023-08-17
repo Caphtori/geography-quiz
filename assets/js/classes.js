@@ -35,10 +35,11 @@ class countryProp{
 
 
 class diffOption{
-    constructor(label, range, points, clr){
+    constructor(label, range, points, time, clr){
         this.label = label;
         this.range = range;
         this.points = points;
+        this.time = time;
         this.clr = clr;
     }
 };
@@ -83,11 +84,11 @@ const natAnth = new countryProp("national anthem", "National Anthems", 3);
 
 
 
-const baby = new diffOption("Baby", [1], 1, "#89cff0");
-const easy = new diffOption("Easy", [1, 2], 2, "#90EE90");
-const reg = new diffOption("Regular", [2, 3, 4], 3, "#FFFF00");
-const hard = new diffOption("Hard", [4, 5], 4, "#ff4500");
-const extreme = new diffOption("Extreme", [5], 5, "#FF000D");
+const baby = new diffOption("Baby", [1], 1, 0, "#89cff0");
+const easy = new diffOption("Easy", [1, 2], 2, 1, "#90EE90");
+const reg = new diffOption("Regular", [2, 3, 4], 3, 3, "#FFFF00");
+const hard = new diffOption("Hard", [4, 5], 4, 5, "#ff4500");
+const extreme = new diffOption("Extreme", [5], 5, 7, "#FF000D");
 const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, "#9966CB");
 
 

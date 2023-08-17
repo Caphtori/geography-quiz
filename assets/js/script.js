@@ -27,6 +27,7 @@ let player = {
 };
 
 let pointsAdd = 0;
+let timeAdd = 0;
 let screen = 'start';
 let isCorrect = false;
 
@@ -34,7 +35,7 @@ let qCounter = 1;
 let quizTime = 0;
 let quizDiff = player.difficulty.label;
 let pdClr = "background-color: "+player.difficulty.clr+";";
-let quizScore = 0;
+// let quizScore = 0;
 
 let outBounds = [];
 let discard = [];
@@ -42,7 +43,7 @@ let discard = [];
 timerEl.textContent = quizTime;
 difficultyEl.textContent = quizDiff;
 difficultyEl.setAttribute("style", pdClr)
-scoreEl.textContent = quizScore;
+scoreEl.textContent = player.score;
 
 // timerEl.textContent(quizTime);
 // difficultyEl.textContent(quizDiff);
@@ -142,13 +143,18 @@ function timerFlash(){
     let isCrunch = false;
     let flashClr = "background-color: #FFFF00;";
     let flashInterval = setInterval(()=>{
+        if (quizTime>10){
+            timerEl.setAttribute("style", "background-color: var(--clr2);");
+            bgClr = true;
+            clearInterval(flashClr);
+        };
         if (pause){
             timerEl.setAttribute("style", "background-color: var(--clr2);");
             bgClr = true;
             clearInterval(flashInterval);
             
         };
-        if (quizTime===5){
+        if (quizTime<6){
             if (!isCrunch){
                 flashClr = "background-color: red;";
                 crunch = 100;
@@ -181,7 +187,7 @@ function startTimer(){
         };
         quizTime--;
         timerEl.textContent = timerDisplay();
-        if (quizTime===10){
+        if (quizTime<11){
             if (!isFlashing){
                 timerFlash();
                 isFlashing=false;
@@ -242,14 +248,18 @@ function quizRender(){
     if (player.mode==="endless"||player.difficulty===random){
         if (prop===gdp){
             pointsAdd=5;
+            timeAdd=7;
         } else {
             pointsAdd=countryCh.propMW(prop)[1];
+            timeAdd=countryCh.propMW(prop)[1]*1.5;
         };
     } else {
         pointsAdd = player.difficulty.points;
+        timeAdd = player.difficulty.time;
     };
 
 
+    quizboxEl.innerHTML='';
     let qBox = document.createElement('section');
     let ul = document.createElement('ul');
     qBox.setAttribute("class", "qBox");
@@ -270,7 +280,12 @@ function quizRender(){
             qBox.textContent = countryCh.propMW(prop)[0]+" is the "+prop.label+" of what country?";
         };
     } else {
-        qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
+        if (prop===hos){
+            qBox.textContent = "Who is the " +prop.label+" of "+countryCh.label+"?";
+        } else {
+            qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
+        };
+        
     };
 
     ul.setAttribute("class", "aUl");
@@ -367,6 +382,8 @@ function resultCl(event){
             isCorrect = false;
             audioIncorrect.play();
             element.setAttribute("style", "border: 2px solid red;");
+            pointsAdd = 0;
+            timeAdd = -5;
 
         }
     };
@@ -385,14 +402,14 @@ function resultCl(event){
 // Transition Screen
 
 function rndrTransition(){
-    let divText = ["Points: ", "Time: "];
+    let divText = ["Points: "+pointsAdd, "Time: "+timeAdd];
 
     isCorrect = false;
     quizboxEl.innerHTML = '';
     headerEl.textContent ='';
     qCounter++;
     for (let i=0; i< 2; i++){
-        div = document.createElement(div);
+        div = document.createElement('div');
         div.setAttribute("class", "transition-div");
         quizboxEl.appendChild(div);
     };
@@ -402,14 +419,120 @@ function rndrTransition(){
         divList[i].textContent = divText[i];
     };
 
-};
+    // if (!isCorrect){
+    //     divList[1].setAttribute("style", "color: red;")
+    // } 
+    // else {
+    //     divList[1].setAttribute("style", "color: black;")
+    // };
+    // function tallyTime(){
+    //     let tallyInterval = setInterval(()=>{
+    //         if (timeAdd<1){
+    //             timeAdd++;
+    //             quizTime--;
+    //             divList[1].textcontent = "Time: "+timeAdd;
+    //             timerEl.textContent = quizTime;
+    //         } else {
+    //             timeAdd--;
+    //             quizTime++;
+    //             divList[1].textcontent = "Time: "+timeAdd;
+    //             timerEl.textContent = quizTime;
+    //         };
+    //         // divList[1].textcontent = "Time: "+timeAdd;
+    //         // timerEl.textContent = quizTime;
 
-// Points Calculator
-// function pointsCalculator{
-//     if (player.mode==="endless"||player.difficulty===random){
-        
-//     }
-// };
+
+
+    //         if (timeAdd===0){
+    //             divList[1].setAttribute("style", "color: black;");
+    //             clearInterval(tallyInterval);
+    //         };
+    //     },
+    //     250);
+
+    // };
+    function tallyTime(){
+        timerEl.setAttribute("style", "color: green;");
+        let tallyInterval = setInterval(()=>{
+            timeAdd--;
+            quizTime++;
+            divList[1].textContent = "Time: "+timeAdd;
+            timerEl.textContent = timerDisplay();
+
+            if (timeAdd===0){
+                timerEl.setAttribute("style", "color: black;");
+                clearInterval(tallyInterval);
+            };
+        },
+        250);
+
+    };
+
+    function tallyTimeNeg(){
+        divList[1].setAttribute("style", "color: red;");
+        timerEl.setAttribute("style", "color: red;");
+        let tallyInterval = setInterval(()=>{
+            timeAdd++;
+            quizTime--;
+            divList[1].textContent = "Time: "+timeAdd;
+            timerEl.textContent = timerDisplay();
+
+            if (timeAdd===0){
+                timerEl.setAttribute("style", "color: blck;");
+                divList[1].setAttribute("style", "color: black;");
+                clearInterval(tallyInterval);
+            };
+        },
+        250);
+
+        function tallyTime(){
+            timerEl.setAttribute("style", "color: green;");
+            let tallyInterval = setInterval(()=>{
+                timeAdd--;
+                quizTime++;
+                divList[1].textContent = "Time: "+timeAdd;
+                timerEl.textContent = timerDisplay();
+    
+                if (timeAdd===0){
+                    timerEl.setAttribute("style", "color: black;");
+                    clearInterval(tallyInterval);
+                };
+            },
+            250);
+    
+        };
+
+    };
+
+
+    function tallyPoints(){
+        scoreEl.setAttribute("style", "color: green;");
+        let tallyInterval = setInterval(()=>{
+            pointsAdd--;
+            player.score++;
+            divList[0].textContent = "Points: "+pointsAdd
+            scoreEl.textContent = player.score;
+
+            if (pointsAdd===0){
+                scoreEl.setAttribute("style", "color: black;");
+                clearInterval(tallyInterval);
+            };
+        },
+        250);
+
+    };
+
+
+    if (timeAdd<1){
+        tallyTimeNeg();
+    } else {
+        tallyTime();
+    };
+
+
+    
+
+};
 
 
 // Answer Compiler
@@ -554,10 +677,16 @@ function gameReset(){
     isCorrect = false;
     headerEl.textContent ='';
 
-}
+};
 
 
 // Game End
+
+function gameEndScr(){
+    quizboxEl.innerHTML='';
+    
+
+};
 
 
 

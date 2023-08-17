@@ -119,36 +119,32 @@ h3{
     height: 100%;
     gap: 1rem;
 }
-
-.starter-ul{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.starter-ul li{
-    /* padding: 1rem; */
-    width: 100px;
-    height: 50px;
+.choiceBtn{
+    padding: 1rem 2rem;
+    /* width: 100px;
+    height: 50px; */
     background-color: var(--clr1);
-    font-size: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
     border: 1px solid black;
-    box-shadow: 0 0 5px 2px var(--shadow);
+    box-shadow: 0 0 7px 3px var(--shadow);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.starter-ul li:hover{
+.choiceBtn:hover{
     cursor: pointer;
-    box-shadow: 0 0 3px 2px var(--hovShadow);
+    box-shadow: 0 0 5px 2px var(--shadow);
+}
+.choiceBtn:active{
+    cursor: pointer;
+    box-shadow: 0 0 2px 1px var(--hovShadow);
 }
 
 .startBtn{
     font-size: 2rem;
+    font-weight: 800;
     background-color: #AAFF00;
     /* border: 2px solid black; */
     border: none;

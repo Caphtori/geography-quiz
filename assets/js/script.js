@@ -34,12 +34,11 @@ let isTimeout = false;
 
 let qCounter = 1;
 let quizTime = 0;
-let quizDiff = player.difficulty.label;
 let pdClr = "background-color: "+player.difficulty.clr+";";
 let discard = [];
 
 timerEl.textContent = quizTime;
-difficultyEl.textContent = quizDiff;
+difficultyEl.textContent = player.difficulty.label;
 difficultyEl.setAttribute("style", pdClr)
 scoreEl.textContent = player.score;
 
@@ -468,26 +467,11 @@ function rndrTransition(){
             250);
     
         };
-
     };
 
 
-    function tallyPoints(){
-        scoreEl.setAttribute("style", "color: green;");
-        let tallyInterval = setInterval(()=>{
-            pointsAdd--;
-            player.score++;
-            divList[0].textContent = "Points: "+pointsAdd
-            scoreEl.textContent = player.score;
 
-            if (pointsAdd===0){
-                scoreEl.setAttribute("style", "color: black;");
-                clearInterval(tallyInterval);
-            };
-        },
-        250);
-
-    };
+    
 
 
     if (timeAdd<1){
@@ -504,8 +488,9 @@ function rndrTransition(){
 
     if (player.mode === "standard"&&qCounter===10){
         pause = true;
-        let t4 = setTimeout(()=>{quizTime=0;}, 2000)
-        let t3 = setTimeout(gameEndScr, 3000);
+        // let t4 = setTimeout(()=>{quizTime=0;}, 2000)
+        // let t3 = setTimeout(gameEndScr, 3000);
+        gameEndScr();
     } else {
         let t3 = setTimeout(quizRender, 3000);
     };
@@ -531,9 +516,7 @@ function answerCompiler(correctAnswer, eligible, prop){
     // checks the eligibility of a choice
     function checker(input, inputArray){
         let propCheck = input.propMW(prop);
-        if (blockArray.includes(input)){
-            return false;
-        } else if (absoAnswer===propCheck){
+        if (absoAnswer===propCheck){
             return false;
         } else if(inputArray.includes(input)){
             return false;
@@ -667,10 +650,28 @@ function gameEndScr(){
     };
 
 
-    // timeout
-    // quizboxEl.setAttribute("class", "qbox-shadow");
-    // quizboxEl.setAttribute("style", "background-color: none; font-size: 1rem; color: none; justify-content: start; align-items: start;");
-    // quizboxEl.textContent = "";
+    timeout(()=>{
+        quizboxEl.setAttribute("class", "qbox-shadow");
+        quizboxEl.setAttribute("style", "background-color: none; font-size: 1rem; color: none; justify-content: start; align-items: start;");
+        quizboxEl.textContent = "";
+    }, 30000);
+
+
+    let divText = ["Final Score: "+player.score, "Time Left: "+quiztime];
+
+    isCorrect = false;
+    quizboxEl.innerHTML = '';
+    headerEl.textContent ='';
+    qCounter++;
+    for (let i=0; i< 2; i++){
+        div = document.createElement('div');
+        div.setAttribute("class", "transition-div");
+        quizboxEl.appendChild(div);
+    };
+
+    let divList = document.getElementsByClassName("transition-div");
+    
+    
 
         
 

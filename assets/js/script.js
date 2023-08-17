@@ -21,14 +21,18 @@ let player = {
 let screen = 'start';
 let isCorrect = false;
 
+let qCounter = 1;
 let quizTime = 0;
-let quizDiff = "";
+let quizDiff = player.difficulty.label;
+let pdClr = "background-color: "+player.difficulty.clr+";";
 let quizScore = 0;
 
 let outBounds = [];
+let discard = [];
 
 timerEl.textContent = quizTime;
 difficultyEl.textContent = quizDiff;
+difficultyEl.setAttribute("style", pdClr)
 scoreEl.textContent = quizScore;
 
 // timerEl.textContent(quizTime);
@@ -51,6 +55,7 @@ function capitalize(str, n){
 // Start Screen Functions
 function renderStart(){
     let sectionClasses =[mode, diffLevel, startBtn];
+    gameReset();
     for (let i=0; i<sectionClasses.length; i++){
         let section = document.createElement('section');
         section.setAttribute("class", "starter-section");
@@ -67,7 +72,7 @@ function startGame(){
     screen = "quiz";
     quizboxEl.innerHTML = '';
     statusBar.setAttribute("style", "visibility: visible;");
-    quizTime = 60;
+    quizTime = 30;
     // quizTime = 20;
     timerEl.textContent = timerDisplay();
     startTimer();
@@ -158,7 +163,7 @@ function startTimer(){
     let timerInterval = setInterval(()=>{
         quizTime--;
         timerEl.textContent = timerDisplay();
-        if (quizTime===15){
+        if (quizTime===10){
             if (!isFlashing){
                 timerFlash();
                 isFlashing=false;
@@ -173,11 +178,11 @@ function startTimer(){
 
 // Quiz Render Functions
 
-function standardCompiler(prop, range){
+function standardCompiler(prop, range, blockList){
     let array = [];
     for (let i=0; i<country.instances.length; i++){
         let choice = country.instances[i];
-        if (range.includes(choice.propMW(prop)[1])){
+        if (range.includes(choice.propMW(prop)[1])&&!blockList.includes(choice)){
             array.push(choice);
         };
     };
@@ -194,7 +199,7 @@ function quizRender(){
     };
     if (player.mode==="standard"||player.difficulty!==random||prop!==gdp){
         if (prop !== gdp){
-            eligibleList = standardCompiler(prop, player.difficulty.range);
+            eligibleList = standardCompiler(prop, player.difficulty.range, discard);
         };
         
     };
@@ -248,14 +253,27 @@ function quizRender(){
             li.dataset.isAnswer = "false";
         };
         if (isReverse){
-            li.textContent = abcd[i]+": " + answers[i].label;
+                li.textContent = abcd[i]+": " + answers[i].label;
+                if(prop===gdp){
+                    li.dataset.reveal = abcd[i]+": " + answers[i].label+", "+answers[i].propMW(prop);
+                } else if(prop===natAnth){
+                    li.dataset.reveal = abcd[i]+": " + answers[i].label+', "'+answers[i].propMW(prop)+'"';
+                } else {
+                    li.dataset.reveal = abcd[i]+": " + answers[i].label+", "+answers[i].propMW(prop)[0];
+                }
+                
+            
+            console.log(answers[i].label+" "+answers[i].propMW(prop)[1]+" "+answers[i].group)
         } else {
             if (prop===gdp){
                 li.textContent = abcd[i]+": " + answers[i].propMW(prop);
+                li.dataset.reveal = abcd[i]+": " + answers[i].propMW(prop)+", "+answers[i].label;
             } else if (prop===natAnth){
-                li.textContent = abcd[i]+": '" + answers[i].propMW(prop)[0]+"'";
+                li.textContent = abcd[i]+': "' + answers[i].propMW(prop)[0]+'"';
+                li.dataset.reveal = abcd[i]+': "' + answers[i].propMW(prop)[0]+'", '+answers[i].label;
             } else {
                 li.textContent = abcd[i]+": " + answers[i].propMW(prop)[0];
+                li.dataset.reveal = abcd[i]+": " + answers[i].propMW(prop)[0]+", "+answers[i].label;
             };
             console.log(answers[i].label+" "+answers[i].propMW(prop)[1]+" "+answers[i].group)
         };
@@ -265,8 +283,14 @@ function quizRender(){
         // li.addEventListener("click", resultCl);
         
     }
-    headerEl.textContent = prop.title;
-
+    if (player.mode==="standard"){
+        headerEl.textContent = qCounter+"/10 "+prop.title;
+    } else {
+        headerEl.textContent = prop.title;
+    }
+    
+    
+    discard.push[countryCh];
     quizboxEl.appendChild(qBox);
     quizboxEl.appendChild(ul)
 };
@@ -275,17 +299,17 @@ function quizRender(){
 function renderResult(){
     let liArray = document.getElementsByClassName("liAnswer");
     let newArray = [];
-    let testNum = 0;
     for (let i=0; i<liArray.length; i++){
         newArray.push(liArray[i]);
     };
     for (let i=0; i<newArray.length; i++){
-        testNum++
         let isRight = newArray[i].getAttribute("data-is-answer");
         if (isRight==="true"){
             newArray[i].setAttribute("class", "right");
         }
         else {
+            // let newText = newArray[i].getAttribute("data-reveal");
+            newArray[i].textContent = newArray[i].getAttribute("data-reveal");
             newArray[i].setAttribute("class", "wrong");
         };
     };
@@ -295,6 +319,7 @@ function resultCl(event){
     let element = event.target;
     let liArray = document.getElementsByClassName("liAnswer");
     let isAnswerTemp = element.getAttribute('data-is-answer');
+    let delay = 3000;
     for (let i = 0; i<liArray.length; i++){
         liArray[i].removeEventListener("click", resultCl);
     }
@@ -307,7 +332,12 @@ function resultCl(event){
             element.setAttribute("style", "border: 2px solid red;");
         }
     };
+
     renderResult()
+    let t = setTimeout(startTimer, delay)
+    if (quizTime<15){
+
+    }
 };
 
 
@@ -403,6 +433,9 @@ function answerCompiler(correctAnswer, eligible, blockArray, prop){
         // };
         answerArray.push(arrayAdd);
     };
+    if (player.mode === "endless"||player.difficulty==="random"){
+        discard = [];
+    };
     return answerArray
 };
 
@@ -433,6 +466,32 @@ function arrayShuffler(array){
     };
     return newArray
 };
+
+
+// Transition Screen
+
+function rndrTransition(){
+    quizboxEl.innerHTML = '';
+    
+
+};
+
+
+
+// Game Reset
+function gameReset(){
+    player.mode = "standard";
+    player.difficulty = reg;
+    player.score = 0
+    player.name =''
+    outBounds = [];
+    discard = [];
+
+}
+
+
+// Game End
+
 
 
 // Start

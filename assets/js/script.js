@@ -30,14 +30,12 @@ let pointsAdd = 0;
 let timeAdd = 0;
 let screen = 'start';
 let isCorrect = false;
+let isTimeout = false;
 
 let qCounter = 1;
 let quizTime = 0;
 let quizDiff = player.difficulty.label;
 let pdClr = "background-color: "+player.difficulty.clr+";";
-// let quizScore = 0;
-
-let outBounds = [];
 let discard = [];
 
 timerEl.textContent = quizTime;
@@ -45,9 +43,6 @@ difficultyEl.textContent = quizDiff;
 difficultyEl.setAttribute("style", pdClr)
 scoreEl.textContent = player.score;
 
-// timerEl.textContent(quizTime);
-// difficultyEl.textContent(quizDiff);
-// scoreEl.textContent(quizScore);
 function capitalize(str, n){
     let newStr = '';
     let char = '';
@@ -82,7 +77,7 @@ function startGame(){
     screen = "quiz";
     quizboxEl.innerHTML = '';
     statusBar.setAttribute("style", "visibility: visible;");
-    quizTime = 30;
+    quizTime = 60;
     // quizTime = 20;
     timerEl.textContent = timerDisplay();
     startTimer();
@@ -101,7 +96,6 @@ function startGameCl(event){
 // Timer Functions
 
 function timerDisplay(){
-    // let seconds = quizTime;
     let seconds = 0;
     let minutes = 0;
     let hours = 0;
@@ -117,9 +111,6 @@ function timerDisplay(){
             return minutes+":"+seconds;
         };
     } else {
-        // let seconds = quizTime%60;
-        // let minutes = ((quizTime-seconds)%3600)/60;
-        // let hours = (quizTime-(minutes*60))/60;
         let remainder = quizTime%3600;
         seconds = remainder%60;
         minutes = (remainder-seconds)/60
@@ -162,7 +153,6 @@ function timerFlash(){
             };
         };
         if (bgClr){
-            // timerEl.setAttribute("style", "background-color: '#FF000D';");
             timerEl.setAttribute("style", flashClr);
             bgClr = false;
         } else{
@@ -187,14 +177,16 @@ function startTimer(){
         };
         quizTime--;
         timerEl.textContent = timerDisplay();
-        if (quizTime<11){
+        if (quizTime<16){
             if (!isFlashing){
                 timerFlash();
                 isFlashing=false;
             };
         };
-        if (quizTime===0){
+        if (quizTime<1){
             clearInterval(timerInterval);
+            isTimeout = true;
+            gameEndScr();
         };
     }, 1000);
 };
@@ -214,7 +206,6 @@ function standardCompiler(prop, range, blockList){
 };
 
 function quizRender(){
-    // let pointsVal = 0;
     let isReverse = coinflip()
     let eligibleList = country.instances;
     let prop = randChoice(countryProp.instances);
@@ -232,7 +223,7 @@ function quizRender(){
 
     
     let countryCh = randChoice(eligibleList);
-    let answers = answerCompiler(countryCh, eligibleList, outBounds, prop);
+    let answers = answerCompiler(countryCh, eligibleList, prop);
 
     
 
@@ -395,7 +386,7 @@ function resultCl(event){
         startTimer()
     }, delay);
     let t2 = setTimeout(rndrTransition, 1000)
-    let t3 = setTimeout(quizRender, delay)
+    
 };
 
 
@@ -418,39 +409,6 @@ function rndrTransition(){
     for (let i=0; i<divList.length; i++){
         divList[i].textContent = divText[i];
     };
-
-    // if (!isCorrect){
-    //     divList[1].setAttribute("style", "color: red;")
-    // } 
-    // else {
-    //     divList[1].setAttribute("style", "color: black;")
-    // };
-    // function tallyTime(){
-    //     let tallyInterval = setInterval(()=>{
-    //         if (timeAdd<1){
-    //             timeAdd++;
-    //             quizTime--;
-    //             divList[1].textcontent = "Time: "+timeAdd;
-    //             timerEl.textContent = quizTime;
-    //         } else {
-    //             timeAdd--;
-    //             quizTime++;
-    //             divList[1].textcontent = "Time: "+timeAdd;
-    //             timerEl.textContent = quizTime;
-    //         };
-    //         // divList[1].textcontent = "Time: "+timeAdd;
-    //         // timerEl.textContent = quizTime;
-
-
-
-    //         if (timeAdd===0){
-    //             divList[1].setAttribute("style", "color: black;");
-    //             clearInterval(tallyInterval);
-    //         };
-    //     },
-    //     250);
-
-    // };
     function tallyTime(){
         timerEl.setAttribute("style", "color: green;");
         let tallyInterval = setInterval(()=>{
@@ -476,11 +434,20 @@ function rndrTransition(){
             quizTime--;
             divList[1].textContent = "Time: "+timeAdd;
             timerEl.textContent = timerDisplay();
-
-            if (timeAdd===0){
+            if (quizTime === 0){
+                clearInterval(tallyInterval);
                 timerEl.setAttribute("style", "color: blck;");
                 divList[1].setAttribute("style", "color: black;");
+                isTimeout = true;
+                gameEndScr();
+
+            };
+
+            if (timeAdd===0){
                 clearInterval(tallyInterval);
+                timerEl.setAttribute("style", "color: blck;");
+                divList[1].setAttribute("style", "color: black;");
+                
             };
         },
         250);
@@ -528,15 +495,27 @@ function rndrTransition(){
     } else {
         tallyTime();
     };
+    
+    if (pointsAdd>0){
+        console.log(pointsAdd);
+        tallyPoints();
+    };
+    
 
-
+    if (player.mode === "standard"&&qCounter===10){
+        pause = true;
+        let t4 = setTimeout(()=>{quizTime=0;}, 2000)
+        let t3 = setTimeout(gameEndScr, 3000);
+    } else {
+        let t3 = setTimeout(quizRender, 3000);
+    };
     
 
 };
 
 
 // Answer Compiler
-function answerCompiler(correctAnswer, eligible, blockArray, prop){
+function answerCompiler(correctAnswer, eligible, prop){
     let answerArray = [correctAnswer];
     let absoAnswer = correctAnswer.propMW(prop);
     let n = 0;
@@ -599,9 +578,7 @@ function answerCompiler(correctAnswer, eligible, blockArray, prop){
     if (regionList.length<1){
         isRegion = true;
     };
-    // let isRegion = false;
     for (let i=0; i<3; i++){
-        // getNumber()
         let arrayAdd = '';
         
         if (!isRegion){
@@ -620,11 +597,6 @@ function answerCompiler(correctAnswer, eligible, blockArray, prop){
                 isAdded = checker(arrayAdd, answerArray);
             };
         };
-        
-        // while (arrayAdd===correctAnswer||blockArray.includes(arrayAdd)){
-        //     getNumber();
-        //     arrayAdd = eligible[n];
-        // };
         answerArray.push(arrayAdd);
     };
     if (player.mode === "endless"||player.difficulty==="random"){
@@ -672,9 +644,10 @@ function gameReset(){
     player.difficulty = reg;
     player.score = 0
     player.name =''
-    outBounds = [];
     discard = [];
     isCorrect = false;
+    isTimeout = false
+    pause =false
     headerEl.textContent ='';
 
 };
@@ -684,7 +657,23 @@ function gameReset(){
 
 function gameEndScr(){
     quizboxEl.innerHTML='';
-    
+
+    if (isTimeout===false){
+        quizboxEl.setAttribute("style", "background-color: green; font-size: 4rem; color: white; justify-content: center; align-items: center;");
+        quizboxEl.textContent = "CONGRATULATIONS";
+    } else {
+        quizboxEl.setAttribute("style", "background-color: red; font-size: 4rem; color: white; justify-content: center; align-items: center;");
+        quizboxEl.textContent = "GAME OVER";
+    };
+
+
+    // timeout
+    // quizboxEl.setAttribute("class", "qbox-shadow");
+    // quizboxEl.setAttribute("style", "background-color: none; font-size: 1rem; color: none; justify-content: start; align-items: start;");
+    // quizboxEl.textContent = "";
+
+        
+
 
 };
 
@@ -694,9 +683,9 @@ function gameEndScr(){
 // init();
 renderStart();
 
-if (screen==="start"){
-    quizboxEl.addEventListener("click", startGameCl);
-};
+// if (screen==="start"){
+//     quizboxEl.addEventListener("click", startGameCl);
+// };
 // else if(screen==="quiz"){
 //     quizboxEl.addEventListener("click", resultCl);
 // };

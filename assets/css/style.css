@@ -9,7 +9,7 @@
 
 body{
     height: 100vh;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--clr1);
     color: var(--txtclr);
 }
@@ -161,6 +161,11 @@ h3{
     box-shadow: 0 0 5px 5px var(--shadow);
 }
 
+.startBtn:active{
+    cursor: pointer;
+    box-shadow: 0 0 3px 3px var(--hovShadow);
+}
+
 h4 {
     font-size: 2rem;
 }
@@ -195,7 +200,7 @@ h4 {
     z-index: 0; */
 }
 
-.aUl li:hover{
+.liAnswer:hover{
     background-color: var(--clr2);
     border: 2px solid black;
     box-shadow: 0 1px 2px 2px var(--shadow);
@@ -204,7 +209,24 @@ h4 {
     z-index: 1;
 }
 
-.aUl li:active{
+.liAnswer:active{
+    background-color: var(--clr2);
+    border: 2px solid black;
+    box-shadow: 0 1px 1px 2px var(--hovShadow);
+    position: relative;
+    top: -0.125rem;
+    z-index: 1;
+}
+
+.liAnswer:active{
     background-color: var(--clr2);
     border: 2px solid yellow;
+}
+
+.right{
+    color: rgb(0, 180, 0);
+}
+
+.wrong{
+    color: red;
 }

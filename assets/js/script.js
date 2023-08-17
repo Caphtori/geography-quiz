@@ -6,6 +6,10 @@ let scoreEl = document.querySelector('#score');
 let headerEl = document.querySelector('#qcard-title');
 let quizboxEl = document.querySelector('#quizbox');
 
+let recordHolders = [];
+
+let isGameOver = false;
+
 
 // Audio by pixabay
 let audioCorrect = new Audio("./assets/audio/correct.mp3");
@@ -21,9 +25,9 @@ let player = {
     mode: "standard",
     difficulty: reg,
 
-    recScore: function(){
-        localStorage.setItem("currentScore", JSONstringify(this));
-    }
+    // recScore: function(){
+    //     localStorage.setItem("currentScore", JSONstringify(this));
+    // }
 };
 
 let pointsAdd = 0;
@@ -41,6 +45,12 @@ timerEl.textContent = quizTime;
 difficultyEl.textContent = player.difficulty.label;
 difficultyEl.setAttribute("style", pdClr)
 scoreEl.textContent = player.score;
+
+function timerFloor(){
+    if (quizTime<0){
+        quizTime=0
+    };
+};
 
 function capitalize(str, n){
     let newStr = '';
@@ -77,14 +87,18 @@ function startGame(){
     quizboxEl.innerHTML = '';
     statusBar.setAttribute("style", "visibility: visible;");
     quizTime = 60;
-    // quizTime = 20;
+    // quizTime =300;
     timerEl.textContent = timerDisplay();
     startTimer();
     quizRender()
 };
 
 function startGameCl(event){
+    event.preventDefault();
     let element = event.target;
+    let btnList = document.getElementsByClassName("choiceBtn");
+    btnList[0].removeEventListener("click", clickemMode);
+    btnList[1].removeEventListener("click", clickEmDiff);
     if (element.matches(".startBtn") === true) {
         startGame();
     }
@@ -175,6 +189,7 @@ function startTimer(){
             clearInterval(timerInterval);
         };
         quizTime--;
+        timerFloor();
         timerEl.textContent = timerDisplay();
         if (quizTime<16){
             if (!isFlashing){
@@ -182,10 +197,15 @@ function startTimer(){
                 isFlashing=false;
             };
         };
-        if (quizTime<1){
-            clearInterval(timerInterval);
-            isTimeout = true;
-            gameEndScr();
+        if (quizTime===0){
+            if (!isGameOver){
+                clearInterval(timerInterval);
+                isTimeout = true;
+                gameEndScr();
+            } else {
+                clearInterval(timerInterval);
+            }
+            
         };
     }, 1000);
 };
@@ -352,6 +372,7 @@ function renderResult(){
 };
 
 function resultCl(event){
+    event.preventDefault();
     let element = event.target;
     let liArray = document.getElementsByClassName("liAnswer");
     let isAnswerTemp = element.getAttribute('data-is-answer');
@@ -431,6 +452,7 @@ function rndrTransition(){
         let tallyInterval = setInterval(()=>{
             timeAdd++;
             quizTime--;
+            timerFloor();
             divList[1].textContent = "Time: "+timeAdd;
             timerEl.textContent = timerDisplay();
             if (quizTime === 0){
@@ -486,11 +508,12 @@ function rndrTransition(){
     };
     
 
-    if (player.mode === "standard"&&qCounter===10){
+    if (player.mode === "standard"&&qCounter===3){
         pause = true;
         // let t4 = setTimeout(()=>{quizTime=0;}, 2000)
         // let t3 = setTimeout(gameEndScr, 3000);
-        gameEndScr();
+        // gameEndScr();
+        let t3 = setTimeout(gameEndScr, 4000);
     } else {
         let t3 = setTimeout(quizRender, 3000);
     };
@@ -639,30 +662,61 @@ function gameReset(){
 // Game End
 
 function gameEndScr(){
+    isGameOver = true;
+    pause = true;
     quizboxEl.innerHTML='';
+    
+    statusBar.setAttribute("style", "visibility: hidden;");
 
+    // if (isTimeout===false){
+    //     quizboxEl.setAttribute("style", "background-color: green; font-size: 4rem; color: white; justify-content: center; align-items: center;");
+    //     quizboxEl.textContent = "CONGRATULATIONS";
+    // } else {
+    //     quizboxEl.setAttribute("style", "background-color: red; font-size: 4rem; color: white; justify-content: center; align-items: center;");
+    //     quizboxEl.textContent = "GAME OVER";
+    // };
+    let fullBox = document.createElement('div');
+    fullBox.setAttribute("class", "endGame-div");
     if (isTimeout===false){
-        quizboxEl.setAttribute("style", "background-color: green; font-size: 4rem; color: white; justify-content: center; align-items: center;");
-        quizboxEl.textContent = "CONGRATULATIONS";
+        fullBox.setAttribute("style", "background-color: green;");
+        fullBox.textContent = "CONGRATULATIONS";
     } else {
-        quizboxEl.setAttribute("style", "background-color: red; font-size: 4rem; color: white; justify-content: center; align-items: center;");
-        quizboxEl.textContent = "GAME OVER";
+        fullBox.setAttribute("style", "background-color: red;");
+        fullBox.textContent = "GAME OVER";
     };
+    quizboxEl.appendChild(fullBox)
 
 
-    timeout(()=>{
-        quizboxEl.setAttribute("class", "qbox-shadow");
-        quizboxEl.setAttribute("style", "background-color: none; font-size: 1rem; color: none; justify-content: start; align-items: start;");
-        quizboxEl.textContent = "";
-    }, 30000);
+
+    let t = setTimeout(finalScoreScr, 3000);
+    
+};
+
+function finalScoreScr(){
+    quizboxEl.innerHTML='';
+    let timeBonus =0;
+    let divText = ["Final Score: "+player.score];
+    if (isTimeout||quizTime<0){
+        divText = ["Final Score: "+player.score];
+    } else {
+        if (player.difficulty!==baby||player.difficulty!==easy){
+            if (player.difficulty===extreme){
+                timeBonus = Math.floor(quizTime/2);
+            } else if (player.difficulty===hard){
+                timeBonus = Math.floor(quizTime/4);
+            } else if (player.difficulty===reg){
+                timeBonus = Math.floor(quizTime/6);
+            };
+            divText = ["Final Score: "+player.score, "TIme Bonus: "+timeBonus];
+        }
+        
+        
+    }
+    
 
 
-    let divText = ["Final Score: "+player.score, "Time Left: "+quiztime];
-
-    isCorrect = false;
     quizboxEl.innerHTML = '';
     headerEl.textContent ='';
-    qCounter++;
     for (let i=0; i< 2; i++){
         div = document.createElement('div');
         div.setAttribute("class", "transition-div");
@@ -670,16 +724,72 @@ function gameEndScr(){
     };
 
     let divList = document.getElementsByClassName("transition-div");
+    console.log(divList.length)
     
     
     for (let i=0; i<divList.length; i++){
+        // if (quizTime<0){
+        //     divList[1].textContent = "";
+        // } else {
+        //     divList[i].textContent = divText[i];
+        // }
         divList[i].textContent = divText[i];
     };
 
+    function finalTally(){
+        let tallyInterval = setInterval(()=>{
+            timeBonus--;
+            player.score++;
+            
+            divList[0].textContent = "Final Score: "+player.score;
+            divList[1].textContent = "Time Bonus: "+timeBonus;
 
-        
+            if (timeBonus===0){
+                clearInterval(tallyInterval);
+                divList[1].textContent = ''
+                renderForm();
+            };
+        },
+        250);
+
+    };
+
+    if (timeBonus>0){
+        finalTally();
+    };
 
 
+    function renderForm(){
+        let form = document.createElement('input');
+        // form.setAttribute("type", "text");
+        form.setAttribute("type", "text");
+        form.setAttribute("class", "form");
+        form.setAttribute("placeholder", "Enter Your Name");
+
+        quizboxEl.appendChild(form);
+        form.addEventListener("submit", highScoreJump, { once: true });
+
+
+    }
+
+};
+
+function highScoreJump(event){
+    console.log(event.input);
+    event.preventDefault();
+    player.name = event.input;
+    recordHolders.push(player);
+    if (recordHolders.length>10){
+    function compareArray(a,b){
+        return a.score-b.score;
+    }
+    // let beatList = recordHolders.sort(compareArray);
+    recordHolders.sort(compareArray);
+    recordHolders.pop();
+    }
+    localStorage.setItem("recordScores", JSON.stringify(recordHolders));
+    window.location.href = "./highscores.html";
+    
 };
 
 

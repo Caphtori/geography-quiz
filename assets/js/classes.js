@@ -41,39 +41,136 @@ class diffOption{
         this.points = points;
         this.time = time;
         this.clr = clr;
+        
     }
+    titleBg (){
+        let bg = "background-clr: "+this.clr;
+        difficultyEl.setAttribute("style", bg);
+    } 
 };
 
 
 class starterRndr{
+    static instances=[];
     constructor(label, titletxt, array){
         this.label = label;
         this.titleTxt = titletxt;
         this.array = array;
+        starterRndr.instances.push(this);
     }
+
     rndr (parent) {
+        let varSelected = null;
+        if (this ===diffLevel){
+            varSelected = this.array[2];
+            console.log(varSelected.label)
+        } else {
+            varSelected = this.array[0];
+        };
+        
         let title = document.createElement('h4');
-        let ul = document.createElement('ul');
+        title.setAttribute("class", "starter-title");
         title.textContent = this.titleTxt;
-        // ul.setAttribute("class", this.label);
-        ul.setAttribute("class", "starter-ul");
-        for (let i=0; i<this.array.length; i++){
-            let li = document.createElement('li');
-            if (this.array[i].label !== undefined){
-                li.textContent = this.array[i].label;
-            } else {
-                li.textContent = capitalize(this.array[i], 0);
-            };
-            if (this.array[i].clr !== undefined){
-                let bg = "background-color: "+this.array[i].clr;
-                li.setAttribute("style", bg);
-            };
-            ul.appendChild(li);
-        }
+        let button = document.createElement('button');
+        button.setAttribute('class', "choiceBtn");
+        console.log(varSelected);
+        let btnList = document.getElementsByClassName("choiceBtn");
+        rndrndr(button, varSelected)
         parent.appendChild(title);
-        parent.appendChild(ul);
+        parent.appendChild(button);
+        if (mode.array.includes(varSelected)){
+            button.addEventListener("click", clickemMode);
+        } else {
+            button.addEventListener("click", clickEmDiff);
+        }
     }
 };
+
+function rndrndr(btn, val){
+    if (diffLevel.array.includes(val)){
+        let bg = "background-color: "+val.clr;
+        btn.textContent = val.label;
+        btn.setAttribute("style", bg);
+    } else {
+        btn.textContent = capitalize(val, 0);
+
+    }
+};
+
+function clickemMode(){
+    let btnList = document.getElementsByClassName("choiceBtn");
+    let thisBtn = btnList[0];
+    let otherBtn = btnList[1];
+    let revertStyle = "visibility: visible; background-color: "+player.difficulty.clr;
+
+    if (player.mode==="standard"){
+        player.mode = "endless"
+        thisBtn.textContent = "Endless";
+        otherBtn.setAttribute("style", "visibility: hidden;");
+        difficultyEl.textContent = player.mode;
+    } else {
+        player.mode = "standard";
+        thisBtn.textContent = "Standard";
+        otherBtn.setAttribute("style", revertStyle);
+        difficultyEl.textContent = player.difficulty.label;
+    };
+};
+
+function clickEmDiff(){
+    let btnList = document.getElementsByClassName("choiceBtn");
+    let thisBtn = btnList[1];
+    let n = diffLevel.array.indexOf(player.difficulty);
+    
+    n++;
+    console.log()
+    if (n>diffLevel.array.length-1){
+        player.difficulty = diffLevel.array[0];
+        
+    } else {
+        player.difficulty = diffLevel.array[n];
+    }
+    let bg = "background-color: "+player.difficulty.clr;
+    thisBtn.textContent = player.difficulty.label;
+    thisBtn.setAttribute("style", bg);
+    difficultyEl.textContent = player.difficulty.label;
+    difficultyEl.setAttribute("style", bg);
+    // hisBtn.setAttribute("style", player.difficulty.bg)
+    // player.difficulty.titleBg();
+
+    
+}
+
+
+// function clickEm(){
+//     l = this.array.length;
+//     n = this.array.indexOf(varSelected);
+//     // let otherBtn = document.getElementsByClassName("starter-section")[1];
+//     let otherBtn = btnList[1];
+
+//     if (n===l-1){
+//         n=0;
+//     } else {
+//         n++;
+//     };
+//     varSelected = this.array[n];
+//     if (mode.array.includes(varSelected)){
+//         if (varSelected==="endless"){
+//             otherBtn.setAttribute("style", "visibility: hidden;");
+//             difficultyEl.textContent = player.mode;
+            
+//         } else {
+//             otherBtn.setAttribute("style", "visibility: visible;");
+//             difficultyEl.textContent = player.difficulty;
+//         }
+//         player.mode = varSelected;
+//     } else {
+//         player.difficulty = varSelected;
+
+//     };
+    
+//     rndrndr()
+    
+// };
 
 const capital = new countryProp("capital", "Capitals", 1);
 const gdp = new countryProp("GDP", "Gross Domestic Product (USD)", 5);

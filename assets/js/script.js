@@ -6,6 +6,15 @@ let scoreEl = document.querySelector('#score');
 let headerEl = document.querySelector('#qcard-title');
 let quizboxEl = document.querySelector('#quizbox');
 
+
+// Audio by pixabay
+let audioCorrect = new Audio("./assets/audio/correct.mp3");
+
+// Audio by pixabay
+let audioIncorrect = new Audio("./assets/audio/incorrect.mp3");
+
+let pause = false;
+
 let player = {
     name: "Bub",
     score: 0,
@@ -17,7 +26,7 @@ let player = {
     }
 };
 
-
+let pointsAdd = 0;
 let screen = 'start';
 let isCorrect = false;
 
@@ -133,6 +142,12 @@ function timerFlash(){
     let isCrunch = false;
     let flashClr = "background-color: #FFFF00;";
     let flashInterval = setInterval(()=>{
+        if (pause){
+            timerEl.setAttribute("style", "background-color: var(--clr2);");
+            bgClr = true;
+            clearInterval(flashInterval);
+            
+        };
         if (quizTime===5){
             if (!isCrunch){
                 flashClr = "background-color: red;";
@@ -161,6 +176,9 @@ function timerFlash(){
 function startTimer(){
     let isFlashing =false;
     let timerInterval = setInterval(()=>{
+        if (pause){
+            clearInterval(timerInterval);
+        };
         quizTime--;
         timerEl.textContent = timerDisplay();
         if (quizTime===10){
@@ -190,6 +208,8 @@ function standardCompiler(prop, range, blockList){
 };
 
 function quizRender(){
+    // let pointsVal = 0;
+    let isReverse = coinflip()
     let eligibleList = country.instances;
     let prop = randChoice(countryProp.instances);
     if (player.difficulty===baby||player.difficulty===easy){
@@ -216,10 +236,18 @@ function quizRender(){
         };
     };
     
-    console.log(countryCh.label+" "+countryCh.propMW(prop)[1]+" "+countryCh.group)
+    console.log(countryCh.label+" "+countryCh.propMW(prop)[1]+" "+countryCh.group);
 
 
-    let isReverse = coinflip()
+    if (player.mode==="endless"||player.difficulty===random){
+        if (prop===gdp){
+            pointsAdd=5;
+        } else {
+            pointsAdd=countryCh.propMW(prop)[1];
+        };
+    } else {
+        pointsAdd = player.difficulty.points;
+    };
 
 
     let qBox = document.createElement('section');
@@ -228,6 +256,9 @@ function quizRender(){
     
 
     answers = arrayShuffler(answers);
+
+
+    
 
 
     if (isReverse){
@@ -319,26 +350,66 @@ function resultCl(event){
     let element = event.target;
     let liArray = document.getElementsByClassName("liAnswer");
     let isAnswerTemp = element.getAttribute('data-is-answer');
-    let delay = 3000;
+    let delay = 4000;
+
+    
+    pause = true;
+    startTimer()
     for (let i = 0; i<liArray.length; i++){
         liArray[i].removeEventListener("click", resultCl);
     }
     if (element.matches('li')) {
         if (isAnswerTemp==="true"){
             isCorrect = true;
+            audioCorrect.play();
             element.setAttribute("style", "border: 2px solid green;");
         } else {
             isCorrect = false;
+            audioIncorrect.play();
             element.setAttribute("style", "border: 2px solid red;");
+
         }
     };
 
     renderResult()
-    let t = setTimeout(startTimer, delay)
-    if (quizTime<15){
-
-    }
+    // quiztime = pauseTime
+    let t = setTimeout(()=>{
+        pause = false;
+        startTimer()
+    }, delay);
+    let t2 = setTimeout(rndrTransition, 1000)
+    let t3 = setTimeout(quizRender, delay)
 };
+
+
+// Transition Screen
+
+function rndrTransition(){
+    let divText = ["Points: ", "Time: "];
+
+    isCorrect = false;
+    quizboxEl.innerHTML = '';
+    headerEl.textContent ='';
+    qCounter++;
+    for (let i=0; i< 2; i++){
+        div = document.createElement(div);
+        div.setAttribute("class", "transition-div");
+        quizboxEl.appendChild(div);
+    };
+
+    let divList = document.getElementsByClassName("transition-div");
+    for (let i=0; i<divList.length; i++){
+        divList[i].textContent = divText[i];
+    };
+
+};
+
+// Points Calculator
+// function pointsCalculator{
+//     if (player.mode==="endless"||player.difficulty===random){
+        
+//     }
+// };
 
 
 // Answer Compiler
@@ -468,13 +539,7 @@ function arrayShuffler(array){
 };
 
 
-// Transition Screen
 
-function rndrTransition(){
-    quizboxEl.innerHTML = '';
-    
-
-};
 
 
 
@@ -486,6 +551,8 @@ function gameReset(){
     player.name =''
     outBounds = [];
     discard = [];
+    isCorrect = false;
+    headerEl.textContent ='';
 
 }
 

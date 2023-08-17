@@ -157,7 +157,7 @@ function startTimer(){
 
 // Quiz Render Functions
 
-let testCountries = [usa, germany, israel, japan, spain, russia, italy, ghana, mexico, chile, mali, uae, tunisia, morocco, vanuatu];
+// let testCountries = [usa, germany, israel, japan, spain, russia, italy, ghana, mexico, chile, mali, uae, tunisia, morocco, vanuatu];
 
 function coinflip(){
     let coin = Math.floor(Math.random()*2);
@@ -169,22 +169,41 @@ function coinflip(){
   };
 
 function quizRender(){
+    let outBounds = [];
+
+
+    let prop = randChoice(countryProp.instances);
+    let countryCh = randChoice(country.instances);
+    let answers = answerCompiler(countryCh, outBounds);
+    
+
+
     let isReverse = coinflip()
+
+
     let qBox = document.createElement('section');
     let ul = document.createElement('ul');
     qBox.setAttribute("class", "qBox");
+    // console.log(prop.label)
+    // console.log(countryCh.label)
+    // if (countryCh.propMW(prop)[0]==="$"){
+    //     console.log(countryCh.propMW(prop))
+    // } else {
+    //     console.log(countryCh.propMW(prop)[0])
+    // };
+    
 
-    let prop = randChoice(countryProps);
-    let countryCh = randChoice(testCountries);
-    console.log(prop.label)
-    console.log(countryCh.label)
-    let test = countryCh.propMW(prop)
-    console.log(test)
+    answers = arrayShuffler(answers);
+
 
     if (isReverse){
         qBox.textContent = "What is the " +prop.label+" of "+countryCh.label+"?";
     } else {
-        qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?"
+        if (countryCh.propMW(prop)[0]==="$"){
+            qBox.textContent = countryCh.propMW(prop)+" is the "+prop.label+" of what country?"
+        } else {
+            qBox.textContent = countryCh.propMW(prop)[0]+" is the "+prop.label+" of what country?"
+        };
     };
 
     ul.setAttribute("class", "aUl");
@@ -202,15 +221,31 @@ function quizRender(){
 };
 
 // Array Shuffling Function
-function arrayShuffler(array, length){
+function arrayShuffler(array){
     let newArray = [];
-    while (newArray.length !== length){
+    while (newArray.length !== array.length){
        let i = Math.floor(Math.random()*array.length);
        if (!newArray.includes(array[i])){
         newArray.push(array[i]);
        };
     };
     return newArray
+};
+
+// Answer Compiler
+function answerCompiler(correctAnswer, blockArray){
+    let answerArray = [correctAnswer];
+    // let isRegion = false;
+    for (let i=0; i<4; i++){
+        let n = Math.floor(Math.random()*country.instances.length);
+        let arrayAdd = country.instances[n];
+        while (arrayAdd===correctAnswer||blockArray.includes(arrayAdd)){
+            n = Math.floor(Math.random()*country.instances.length);
+            arrayAdd = country.instances[n];
+        };
+        answerArray.push(arrayAdd);
+    };
+    return answerArray
 };
 
 // Question Generator

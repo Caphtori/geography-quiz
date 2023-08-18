@@ -62,7 +62,8 @@ class starterRndr{
     rndr (parent) {
         let varSelected = null;
         if (this ===diffLevel){
-            varSelected = this.array[2];
+            // Changed from [2] because baby difficulty is now removed
+            varSelected = this.array[1];
         } else {
             varSelected = this.array[0];
         };
@@ -144,44 +145,11 @@ function clickEmDiff(event){
     
 }
 
-
-// function clickEm(){
-//     l = this.array.length;
-//     n = this.array.indexOf(varSelected);
-//     // let otherBtn = document.getElementsByClassName("starter-section")[1];
-//     let otherBtn = btnList[1];
-
-//     if (n===l-1){
-//         n=0;
-//     } else {
-//         n++;
-//     };
-//     varSelected = this.array[n];
-//     if (mode.array.includes(varSelected)){
-//         if (varSelected==="endless"){
-//             otherBtn.setAttribute("style", "visibility: hidden;");
-//             difficultyEl.textContent = player.mode;
-            
-//         } else {
-//             otherBtn.setAttribute("style", "visibility: visible;");
-//             difficultyEl.textContent = player.difficulty;
-//         }
-//         player.mode = varSelected;
-//     } else {
-//         player.difficulty = varSelected;
-
-//     };
-    
-//     rndrndr()
-    
-// };
-
 const capital = new countryProp("capital", "Capitals", 1);
 const gdp = new countryProp("GDP", "Gross Domestic Product (USD)", 5);
 const hos = new countryProp("head of state", "Heads of State", 4);
 const currency = new countryProp("currency", "National Currencies", 2);
 const natAnth = new countryProp("national anthem", "National Anthems", 3);
-// let countryProps = [capital, gdp, hos, currency, natAnth];
 
 
 
@@ -195,7 +163,10 @@ const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, 4, "#9966CB");
 
 
 const mode = new starterRndr("mode", "Choose Game Mode", ["standard", "endless"]);
-const diffLevel = new starterRndr("difflvl", "Choose Difficulty Level", [baby, easy, reg, hard, extreme, random]);
+// const diffLevel = new starterRndr("difflvl", "Choose Difficulty Level", [baby, easy, reg, hard, extreme, random]);
+
+// Removed Baby mode from array because it is brokeon.
+const diffLevel = new starterRndr("difflvl", "Choose Difficulty Level", [easy, reg, hard, extreme, random]);
 let startBtn = {
     label: "START",
     rndr: function(parent){

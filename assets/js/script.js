@@ -251,8 +251,6 @@ function quizRender(){
             countryCh = randChoice(eligibleList);
         };
     };
-    
-    console.log(countryCh.label+" "+countryCh.propMW(prop)[1]+" "+countryCh.group);
 
 
     if (player.mode==="endless"||player.difficulty===random){
@@ -319,7 +317,7 @@ function quizRender(){
                 }
                 
             
-            console.log(answers[i].label+" "+answers[i].propMW(prop)[1]+" "+answers[i].group)
+           
         } else {
             if (prop===gdp){
                 li.textContent = abcd[i]+": " + answers[i].propMW(prop);
@@ -331,7 +329,6 @@ function quizRender(){
                 li.textContent = abcd[i]+": " + answers[i].propMW(prop)[0];
                 li.dataset.reveal = abcd[i]+": " + answers[i].propMW(prop)[0]+", "+answers[i].label;
             };
-            console.log(answers[i].label+" "+answers[i].propMW(prop)[1]+" "+answers[i].group)
         };
         
         ul.appendChild(li);
@@ -503,7 +500,6 @@ function rndrTransition(){
     };
     
     if (pointsAdd>0){
-        console.log(pointsAdd);
         tallyPoints();
     };
     
@@ -586,7 +582,6 @@ function answerCompiler(correctAnswer, eligible, prop){
             regionList.push(eligible[i]);
         };
     };
-    console.log(regionList.length);
     if (regionList.length<1){
         isRegion = true;
     };
@@ -596,7 +591,6 @@ function answerCompiler(correctAnswer, eligible, prop){
         if (!isRegion){
             getNumber(regionList);
             arrayAdd = regionList[n];
-            console.log(arrayAdd.label);
 
             isRegion = true;
         } else {
@@ -730,7 +724,6 @@ function finalScoreScr(){
     };
 
     let divList = document.getElementsByClassName("transition-div");
-    console.log(divList.length)
     
     
     for (let i=0; i<divList.length; i++){
@@ -794,11 +787,9 @@ function finalScoreScr(){
         //     highScoreJump();
         // }, { once: true })
         player.name = form.value;
-        console.log(player.name);
         formBtn.addEventListener("click", (event)=>{
             element = event.target;
             player.name = form.value;
-            console.log(player.name);
             highScoreJump();
         }, { once: true });
 
@@ -852,14 +843,17 @@ function renderHighScore(){
     for (let i=0; i<10; i++){
         let li = document.createElement('li');
         li.setAttribute("class", "liHs");
-        console.log(i);
         n = i+1;
-        if (recordHolders.length<i){
-            li.textContent= n+") "
-        } else {
-            console.log(recordHolders)
+        // if (recordHolders.length<i-1){
+        //     li.textContent= n+") "
+        // } else {
+        //     li.textContent= n+") "+recordHolders[i];
+        // };
+        if (recordHolders[i]!=undefined){
             li.textContent= n+") "+recordHolders[i].name;
-        };
+        } else {
+            li.textContent= n+") "
+        }
         ul.appendChild(li);
     }   
     quizboxEl.appendChild(ul);

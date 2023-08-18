@@ -63,7 +63,6 @@ class starterRndr{
         let varSelected = null;
         if (this ===diffLevel){
             varSelected = this.array[2];
-            console.log(varSelected.label)
         } else {
             varSelected = this.array[0];
         };
@@ -73,7 +72,6 @@ class starterRndr{
         title.textContent = this.titleTxt;
         let button = document.createElement('button');
         button.setAttribute('class', "choiceBtn");
-        console.log(varSelected);
         let btnList = document.getElementsByClassName("choiceBtn");
         rndrndr(button, varSelected)
         parent.appendChild(title);
@@ -116,7 +114,7 @@ function clickemMode(event){
         element.textContent = "Standard";
         otherBtn.setAttribute("style", revertStyle);
         difficultyEl.textContent = player.difficulty.label;
-        difficultyEl.setAttribute("style", revertStyle);
+        // difficultyEl.setAttribute("style", revertStyle);
     };
 };
 
@@ -128,7 +126,6 @@ function clickEmDiff(event){
     let n = diffLevel.array.indexOf(player.difficulty);
     
     n++;
-    console.log()
     if (n>diffLevel.array.length-1){
         player.difficulty = diffLevel.array[0];
         

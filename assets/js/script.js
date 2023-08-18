@@ -547,18 +547,24 @@ function answerCompiler(correctAnswer, eligible, prop){
             if (propCheck.includes(censure)){
                 return false;
             };
-        } else if(player.mode==="endless"){
-            if (prop !== gdp){
-                let diff = absoAnswer[1];
-                if (diff===5&&propCheck[1]<4){
-                    return false;
-                } else if (diff===1&&propCheck[1]>2){
-                    return false;
-                } else if (diff-propCheck>1||propCheck-diff>1){
-                    return false;
-                };
-            };
+        // } else if(player.mode==="endless"){
+        //     if (prop !== gdp){
+        //         let diff = absoAnswer[1];
+        //         if (diff===5&&propCheck[1]<4){
+        //             return false;
+        //         } else if (diff===1&&propCheck[1]>2){
+        //             return false;
+        //         } else if (diff-propCheck>1||propCheck-diff>1){
+        //             return false;
+        //         };
+            // };
         } else {
+            for (let i=0; i<inputArray.length; i++){
+                let dupliCheck = inputArray[i].propMW(prop);
+                if (dupliCheck===propCheck){
+                    return false;
+                }
+            }
             return true;
         };
         
@@ -748,6 +754,8 @@ function finalScoreScr(){
                 clearInterval(tallyInterval);
                 divList[1].textContent = ''
                 renderForm();
+                // player.name = 'bub';
+                // highScoreJump()
             };
         },
         250);
@@ -760,24 +768,45 @@ function finalScoreScr(){
 
 
     function renderForm(){
+        let formDiv = document.createElement('div');
         let form = document.createElement('input');
-        // form.setAttribute("type", "text");
+        let formBtn = document.createElement('button');
+        formDiv.setAttribute("class", "formDiv");
+        formBtn.setAttribute("class", "formBtn");
+        formBtn.textContent="Submit"
+
         form.setAttribute("type", "text");
         form.setAttribute("class", "form");
         form.setAttribute("placeholder", "Enter Your Name");
+    
 
-        quizboxEl.appendChild(form);
-        form.addEventListener("submit", highScoreJump, { once: true });
+        div.appendChild(form);
+        div.appendChild(formBtn);
+        quizboxEl.appendChild(formDiv);
+        
+        // if (form.value!=''){
+        //     formBtn.addEventListener("click", highScoreJump, { once: true });
+        // };
+        // form.addEventListener("submit", (event)=>{
+        //     element = event.target;
+        //     player.name = element.value;
+        //     console.log(player.name);
+        //     highScoreJump();
+        // }, { once: true })
+        player.name = form.value;
+        console.log(player.name);
+        formBtn.addEventListener("click", (event)=>{
+            element = event.target;
+            player.name = form.value;
+            console.log(player.name);
+            highScoreJump();
+        }, { once: true });
 
-
-    }
+    };
 
 };
 
-function highScoreJump(event){
-    console.log(event.input);
-    event.preventDefault();
-    player.name = event.input;
+function highScoreJump(){
     recordHolders.push(player);
     if (recordHolders.length>10){
     function compareArray(a,b){
@@ -787,8 +816,8 @@ function highScoreJump(event){
     recordHolders.sort(compareArray);
     recordHolders.pop();
     }
-    localStorage.setItem("recordScores", JSON.stringify(recordHolders));
-    window.location.href = "./highscores.html";
+    localStorage.setItem("highScores", JSON.stringify(recordHolders));
+    renderHighScore()
     
 };
 
@@ -804,3 +833,39 @@ renderStart();
 // else if(screen==="quiz"){
 //     quizboxEl.addEventListener("click", resultCl);
 // };
+
+
+
+
+// Highscores Page
+// let listBox = document.querySelector('#list-box');
+let n=0;
+function renderHighScore(){
+    let storedHs = JSON.parse(localStorage.getItem("highScores"));
+    if (storedHs!==null){
+        recordHolders = storedHs;
+    }
+    headerEl.textContent = "Highscores";
+    quizboxEl.innerHTML='';
+    let ul = document.createElement('ul');
+    ul.setAttribute("class", "ulHs");
+    for (let i=0; i<10; i++){
+        let li = document.createElement('li');
+        li.setAttribute("class", "liHs");
+        console.log(i);
+        n = i+1;
+        if (recordHolders.length<i){
+            li.textContent= n+") "
+        } else {
+            console.log(recordHolders)
+            li.textContent= n+") "+recordHolders[i].name;
+        };
+        ul.appendChild(li);
+    }   
+    quizboxEl.appendChild(ul);
+    
+}
+let nxtBtn = document.createElement("button");
+
+
+// renderHighScore()

@@ -110,11 +110,13 @@ function clickemMode(event){
         element.textContent = "Endless";
         otherBtn.setAttribute("style", "visibility: hidden;");
         difficultyEl.textContent = player.mode;
+        difficultyEl.setAttribute("style", "background-color: white;")
     } else {
         player.mode = "standard";
         element.textContent = "Standard";
         otherBtn.setAttribute("style", revertStyle);
         difficultyEl.textContent = player.difficulty.label;
+        difficultyEl.setAttribute("style", revertStyle);
     };
 };
 

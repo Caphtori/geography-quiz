@@ -105,6 +105,7 @@ function clickemMode(event){
 
     if (player.mode==="standard"){
         player.mode = "endless"
+        player.difficulty = reg;
         element.textContent = "Endless";
         otherBtn.setAttribute("style", "visibility: hidden;");
         difficultyEl.textContent = player.mode;
@@ -189,7 +190,7 @@ const easy = new diffOption("Easy", [1, 2], 2, 1, "#90EE90");
 const reg = new diffOption("Normal", [2, 3, 4], 3, 3, "#FFFF00");
 const hard = new diffOption("Hard", [4, 5], 4, 5, "#ff4500");
 const extreme = new diffOption("Extreme", [5], 5, 7, "#FF000D");
-const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, "#9966CB");
+const random = new diffOption("Random", [1, 2, 3, 4, 5], 0, 4, "#9966CB");
 
 
 

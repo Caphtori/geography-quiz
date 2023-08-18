@@ -10,6 +10,7 @@ let recordHolders = [];
 
 let isGameOver = false;
 
+let timeSwitch = false;
 
 // Audio by pixabay
 let audioCorrect = new Audio("./assets/audio/correct.mp3");
@@ -202,7 +203,9 @@ function startTimer(){
             if (!isGameOver){
                 clearInterval(timerInterval);
                 isTimeout = true;
-                gameEndScr();
+                if (!timeSwitch){
+                    gameEndScr();
+                }
             } else {
                 clearInterval(timerInterval);
             }
@@ -260,7 +263,9 @@ function quizRender(){
             timeAdd=7;
         } else {
             pointsAdd=countryCh.propMW(prop)[1];
-            timeAdd=countryCh.propMW(prop)[1]*1.5;
+            timeAdd=Math.floor(countryCh.propMW(prop)[1]*1.5);
+            console.log(pointsAdd);
+            console.log(timeAdd);
         };
     } else {
         pointsAdd = player.difficulty.points;
@@ -312,7 +317,7 @@ function quizRender(){
                 if(prop===gdp){
                     li.dataset.reveal = abcd[i]+": " + answers[i].label+", "+answers[i].propMW(prop);
                 } else if(prop===natAnth){
-                    li.dataset.reveal = abcd[i]+": " + answers[i].label+', "'+answers[i].propMW(prop)+'"';
+                    li.dataset.reveal = abcd[i]+": " + answers[i].label+', "'+answers[i].propMW(prop)[0]+'"';
                 } else {
                     li.dataset.reveal = abcd[i]+": " + answers[i].label+", "+answers[i].propMW(prop)[0];
                 }
@@ -447,29 +452,34 @@ function rndrTransition(){
     function tallyTimeNeg(){
         divList[1].setAttribute("style", "color: red;");
         timerEl.setAttribute("style", "color: red;");
-        let tallyInterval = setInterval(()=>{
-            timeAdd++;
-            quizTime--;
-            timerFloor();
-            divList[1].textContent = "Time: "+timeAdd;
-            timerEl.textContent = timerDisplay();
-            if (quizTime === 0){
-                clearInterval(tallyInterval);
-                timerEl.setAttribute("style", "color: blck;");
-                divList[1].setAttribute("style", "color: black;");
-                isTimeout = true;
-                gameEndScr();
-
-            };
-
-            if (timeAdd===0){
-                clearInterval(tallyInterval);
-                timerEl.setAttribute("style", "color: blck;");
-                divList[1].setAttribute("style", "color: black;");
-                
-            };
-        },
-        250);
+        if (player.difficulty!==baby){
+            let tallyInterval = setInterval(()=>{
+                timeAdd++;
+                quizTime--;
+                timerFloor();
+                divList[1].textContent = "Time: "+timeAdd;
+                timerEl.textContent = timerDisplay();
+                if (quizTime === 0){
+                    clearInterval(tallyInterval);
+                    pause = true;
+                    timerEl.setAttribute("style", "color: blck;");
+                    divList[1].setAttribute("style", "color: black;");
+                    isTimeout = true;
+                    timeSwitch = true;
+                    gameEndScr();
+    
+                };
+    
+                if (timeAdd===0){
+                    clearInterval(tallyInterval);
+                    timerEl.setAttribute("style", "color: blck;");
+                    divList[1].setAttribute("style", "color: black;");
+                    
+                };
+            },
+            250);
+        }
+        
     };
 
     function tallyPoints(){
@@ -505,14 +515,16 @@ function rndrTransition(){
     };
     
 
-    if (player.mode === "standard"&&qCounter===3){
+    if (player.mode === "standard"&&qCounter===11){
         pause = true;
         // let t4 = setTimeout(()=>{quizTime=0;}, 2000)
         // let t3 = setTimeout(gameEndScr, 3000);
         // gameEndScr();
         let t3 = setTimeout(gameEndScr, 4000);
     } else {
-        let t3 = setTimeout(quizRender, 3000);
+        if (!isTimeout||!isGameOver){
+            let t3 = setTimeout(quizRender, 3000);
+        }; 
     };
     
 
@@ -535,8 +547,13 @@ function answerCompiler(correctAnswer, eligible, prop){
 
     // checks the eligibility of a choice
     function checker(input, inputArray){
-        let propCheck = input.propMW(prop);
-        if (absoAnswer===propCheck){
+        let propCheck = input.propMW(prop)[0];
+        let checkAgainst = absoAnswer[0];
+        if (prop===gdp){
+            propCheck = input.propMW(prop);
+            checkAgainst = absoAnswer;
+        }
+        if (checkAgainst===propCheck){
             return false;
         } else if(inputArray.includes(input)){
             return false;
@@ -557,13 +574,19 @@ function answerCompiler(correctAnswer, eligible, prop){
             // };
         } else {
             for (let i=0; i<inputArray.length; i++){
-                let dupliCheck = inputArray[i].propMW(prop);
+                let dupliCheck = inputArray[i].propMW(prop)[0];
+                if (prop===gdp){
+                    dupliCheck = inputArray[i].propMW(prop);
+                };
                 if (dupliCheck===propCheck){
                     return false;
                 }
             }
             for (let i=0; i<answerArray.length; i++){
-                let dupliCheck = answerArray[i].propMW(prop);
+                let dupliCheck = answerArray[i].propMW(prop)[0];
+                if (prop===gdp){
+                    upliCheck = answerArray[i].propMW(prop);
+                };
                 if (dupliCheck===propCheck){
                     return false;
                 }
@@ -574,7 +597,7 @@ function answerCompiler(correctAnswer, eligible, prop){
     };
 
     // Checks if the national anthems are too similar
-    if (absoAnswer.includes(censure)){
+    if (absoAnswer[0].includes(censure)){
         isCensure = true;
     };
 
@@ -664,6 +687,7 @@ function gameReset(){
     isCorrect = false;
     isTimeout = false
     pause =false
+    timeSwitch = false;
     headerEl.textContent ='';
 
 };
@@ -704,20 +728,25 @@ function gameEndScr(){
 
 function finalScoreScr(){
     quizboxEl.innerHTML='';
-    let timeBonus =0;
+    let timeBonus = 0;
     let divText = ["Final Score: "+player.score];
     if (isTimeout||quizTime<0){
         divText = ["Final Score: "+player.score];
     } else {
-        if (player.difficulty!==baby||player.difficulty!==easy){
-            if (player.difficulty===extreme){
-                timeBonus = Math.floor(quizTime/2);
-            } else if (player.difficulty===hard){
-                timeBonus = Math.floor(quizTime/4);
-            } else if (player.difficulty===reg){
-                timeBonus = Math.floor(quizTime/6);
-            };
-            divText = ["Final Score: "+player.score, "TIme Bonus: "+timeBonus];
+        if (player.difficulty!==baby){
+            if (player.difficulty!==easy){
+                if (player.difficulty===extreme){
+                    timeBonus = Math.floor(quizTime/2);
+                } else if (player.difficulty===random){ 
+                    imeBonus = Math.floor(quizTime/3);
+                } else if (player.difficulty===hard){
+                    timeBonus = Math.floor(quizTime/4);
+                } else if (player.difficulty===reg){
+                    timeBonus = Math.floor(quizTime/6);
+                };
+                divText = ["Final Score: "+player.score, "Time Bonus: "+timeBonus];
+            }
+            
         }
         
         
@@ -767,7 +796,9 @@ function finalScoreScr(){
 
     if (timeBonus>0){
         finalTally();
-    };
+    } else {
+        renderForm()
+    }
 
 
     function renderForm(){
@@ -786,17 +817,8 @@ function finalScoreScr(){
         formDiv.appendChild(form);
         formDiv.appendChild(formBtn);
         quizboxEl.appendChild(formDiv);
-        
-        // if (form.value!=''){
-        //     formBtn.addEventListener("click", highScoreJump, { once: true });
-        // };
-        // form.addEventListener("submit", (event)=>{
-        //     element = event.target;
-        //     player.name = element.value;
-        //     console.log(player.name);
-        //     highScoreJump();
-        // }, { once: true })
-        player.name = form.value;
+
+        // player.name = form.value;
         formBtn.addEventListener("click", (event)=>{
             element = event.target;
             player.name = form.value;

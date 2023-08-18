@@ -236,26 +236,6 @@ h4 {
     align-items: center;
 }
 
-/* .win {
-    height: 85%;
-    font-size: 4rem;
-    background-color: green;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-};
-
-.lose {
-    height: 85%;
-    font-size: 4rem;
-    background-color: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-}; */
-
 
 /* End game banner */
 .endGame-div{

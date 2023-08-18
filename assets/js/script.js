@@ -25,10 +25,6 @@ let player = {
     score: 0,
     mode: "standard",
     difficulty: reg,
-
-    // recScore: function(){
-    //     localStorage.setItem("currentScore", JSONstringify(this));
-    // }
 };
 
 let pointsAdd = 0;
@@ -339,7 +335,6 @@ function quizRender(){
         
         ul.appendChild(li);
         li.addEventListener("click", resultCl, { once: true });
-        // li.addEventListener("click", resultCl);
         
     }
     if (player.mode==="standard"){
@@ -367,7 +362,6 @@ function renderResult(){
             newArray[i].setAttribute("class", "right");
         }
         else {
-            // let newText = newArray[i].getAttribute("data-reveal");
             newArray[i].textContent = newArray[i].getAttribute("data-reveal");
             newArray[i].setAttribute("class", "wrong");
         };
@@ -403,7 +397,6 @@ function resultCl(event){
     };
 
     renderResult()
-    // quiztime = pauseTime
     let t = setTimeout(()=>{
         pause = false;
         startTimer()
@@ -517,9 +510,6 @@ function rndrTransition(){
 
     if (player.mode === "standard"&&qCounter===11){
         pause = true;
-        // let t4 = setTimeout(()=>{quizTime=0;}, 2000)
-        // let t3 = setTimeout(gameEndScr, 3000);
-        // gameEndScr();
         let t3 = setTimeout(gameEndScr, 4000);
     } else {
         if (!isTimeout||!isGameOver){
@@ -702,13 +692,7 @@ function gameEndScr(){
     
     statusBar.setAttribute("style", "visibility: hidden;");
 
-    // if (isTimeout===false){
-    //     quizboxEl.setAttribute("style", "background-color: green; font-size: 4rem; color: white; justify-content: center; align-items: center;");
-    //     quizboxEl.textContent = "CONGRATULATIONS";
-    // } else {
-    //     quizboxEl.setAttribute("style", "background-color: red; font-size: 4rem; color: white; justify-content: center; align-items: center;");
-    //     quizboxEl.textContent = "GAME OVER";
-    // };
+   
     let fullBox = document.createElement('div');
     fullBox.setAttribute("class", "endGame-div");
     if (isTimeout===false){
@@ -766,11 +750,6 @@ function finalScoreScr(){
     
     
     for (let i=0; i<divList.length; i++){
-        // if (quizTime<0){
-        //     divList[1].textContent = "";
-        // } else {
-        //     divList[i].textContent = divText[i];
-        // }
         divList[i].textContent = divText[i];
     };
 
@@ -786,8 +765,6 @@ function finalScoreScr(){
                 clearInterval(tallyInterval);
                 divList[1].textContent = ''
                 renderForm();
-                // player.name = 'bub';
-                // highScoreJump()
             };
         },
         250);
@@ -818,7 +795,7 @@ function finalScoreScr(){
         formDiv.appendChild(formBtn);
         quizboxEl.appendChild(formDiv);
 
-        // player.name = form.value;
+        
         formBtn.addEventListener("click", (event)=>{
             element = event.target;
             player.name = form.value;
@@ -839,8 +816,6 @@ function highScoreJump(){
     recordHolders.sort(compareArray);
     recordHolders.reverse();
     if (recordHolders.length>10){
-  
-    // let beatList = recordHolders.sort(compareArray);
         
         recordHolders.pop();
     }
@@ -858,13 +833,6 @@ function highScoreJump(){
 // init();
 renderStart();
 
-// if (screen==="start"){
-//     quizboxEl.addEventListener("click", startGameCl);
-// };
-// else if(screen==="quiz"){
-//     quizboxEl.addEventListener("click", resultCl);
-// };
-
 function newGame(){
     gameReset()
     renderStart()
@@ -874,7 +842,6 @@ function newGame(){
 
 
 // Highscores Page
-// let listBox = document.querySelector('#list-box');
 let n=0;
 function renderHighScore(){
     
@@ -885,13 +852,13 @@ function renderHighScore(){
         let li = document.createElement('li');
         li.setAttribute("class", "liHs");
         n = i+1;
-        // if (recordHolders.length<i-1){
-        //     li.textContent= n+") "
-        // } else {
-        //     li.textContent= n+") "+recordHolders[i];
-        // };
         if (recordHolders[i]!=undefined){
-            li.textContent= n+") "+recordHolders[i].name+" "+recordHolders[i].score;
+            if (recordHolders[i].mode==="endless"){
+                li.textContent= n+") "+recordHolders[i].name+" "+recordHolders[i].score+" "+recordHolders[i].mode;
+            } else {
+                li.textContent= n+") "+recordHolders[i].name+" "+recordHolders[i].score+" "+recordHolders[i].difficulty.label;
+            }
+            
         } else {
             li.textContent= n+") "
         }
@@ -908,5 +875,3 @@ function renderHighScore(){
 }
 
 
-
-// renderHighScore()

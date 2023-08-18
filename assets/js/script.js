@@ -69,7 +69,8 @@ function capitalize(str, n){
 // Start Screen Functions
 function renderStart(){
     let sectionClasses =[mode, diffLevel, startBtn];
-    gameReset();
+    // gameReset();
+    scoreEl.textContent = player.score;
     for (let i=0; i<sectionClasses.length; i++){
         let section = document.createElement('section');
         section.setAttribute("class", "starter-section");
@@ -561,6 +562,12 @@ function answerCompiler(correctAnswer, eligible, prop){
                     return false;
                 }
             }
+            for (let i=0; i<answerArray.length; i++){
+                let dupliCheck = answerArray[i].propMW(prop);
+                if (dupliCheck===propCheck){
+                    return false;
+                }
+            }
             return true;
         };
         
@@ -646,8 +653,11 @@ function arrayShuffler(array){
 
 // Game Reset
 function gameReset(){
+    quizboxEl.innerHTML = '';
     player.mode = "standard";
     player.difficulty = reg;
+    quizTime = 0;
+    qCounter = 1;
     player.score = 0
     player.name =''
     discard = [];
@@ -773,8 +783,8 @@ function finalScoreScr(){
         form.setAttribute("placeholder", "Enter Your Name");
     
 
-        div.appendChild(form);
-        div.appendChild(formBtn);
+        formDiv.appendChild(form);
+        formDiv.appendChild(formBtn);
         quizboxEl.appendChild(formDiv);
         
         // if (form.value!=''){
@@ -798,14 +808,22 @@ function finalScoreScr(){
 };
 
 function highScoreJump(){
+    let storedHs = JSON.parse(localStorage.getItem("highScores"));
+    if (storedHs!==null){
+        recordHolders = storedHs;
+    }
+    headerEl.textContent = "Highscores";
     recordHolders.push(player);
+    recordHolders.sort(compareArray);
+    recordHolders.reverse();
     if (recordHolders.length>10){
+  
+    // let beatList = recordHolders.sort(compareArray);
+        
+        recordHolders.pop();
+    }
     function compareArray(a,b){
         return a.score-b.score;
-    }
-    // let beatList = recordHolders.sort(compareArray);
-    recordHolders.sort(compareArray);
-    recordHolders.pop();
     }
     localStorage.setItem("highScores", JSON.stringify(recordHolders));
     renderHighScore()
@@ -825,6 +843,11 @@ renderStart();
 //     quizboxEl.addEventListener("click", resultCl);
 // };
 
+function newGame(){
+    gameReset()
+    renderStart()
+};
+
 
 
 
@@ -832,11 +855,7 @@ renderStart();
 // let listBox = document.querySelector('#list-box');
 let n=0;
 function renderHighScore(){
-    let storedHs = JSON.parse(localStorage.getItem("highScores"));
-    if (storedHs!==null){
-        recordHolders = storedHs;
-    }
-    headerEl.textContent = "Highscores";
+    
     quizboxEl.innerHTML='';
     let ul = document.createElement('ul');
     ul.setAttribute("class", "ulHs");
@@ -850,7 +869,7 @@ function renderHighScore(){
         //     li.textContent= n+") "+recordHolders[i];
         // };
         if (recordHolders[i]!=undefined){
-            li.textContent= n+") "+recordHolders[i].name;
+            li.textContent= n+") "+recordHolders[i].name+" "+recordHolders[i].score;
         } else {
             li.textContent= n+") "
         }
@@ -858,8 +877,14 @@ function renderHighScore(){
     }   
     quizboxEl.appendChild(ul);
     
+
+    let nxtBtn = document.createElement("button");
+    nxtBtn.setAttribute("class", "nxtBtn");
+    nxtBtn.textContent = "New Game";
+    quizboxEl.appendChild(nxtBtn);
+    nxtBtn.addEventListener("click", newGame, { once:true });
 }
-let nxtBtn = document.createElement("button");
+
 
 
 // renderHighScore()
